@@ -1,9 +1,11 @@
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import store from "./js/redux/store/index";
-import App from ".//js/components/App.jsx"; //redux 範例
 
+import './index.css';
+import store from "./redux/store/index";
+// import App from "./components/App.jsx"; //redux 範例
+import App from "./containers/App"
 import * as serviceWorker from './serviceWorker';
 
 render(
