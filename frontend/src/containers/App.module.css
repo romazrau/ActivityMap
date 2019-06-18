@@ -1,0 +1,9 @@
+.mainwindow{
+    margin-top: 55px;
+	min-height: 85vh;
+    background-color: rgb(202, 202, 202);
+}
+
+.slidewindow{
+    background-color: rgb(242, 243, 208);
+}

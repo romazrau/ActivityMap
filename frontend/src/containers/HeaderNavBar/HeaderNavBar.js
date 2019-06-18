@@ -1,17 +1,7 @@
-import React from 'react';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem } from 'reactstrap';
-  import styles from './HeaderNavBar.module.css'
+import React from "react";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+// import styles from "./HeaderNavBar.module.css";
 
 export default class Example extends React.Component {
   constructor(props) {
@@ -29,41 +19,41 @@ export default class Example extends React.Component {
   }
   render() {
     return (
-     
-      <div className={styles.header}>
-        {/* TODO:顏色失敗 */}
-        <Navbar  bg="primary" variant="dark" > 
-          <NavbarBrand href="/" >活動通地圖</NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink href="/components/">Components</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-              </NavItem>
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                  Options
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem>
-                    Option 1
-                  </DropdownItem>
-                  <DropdownItem>
-                    Option 2
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem>
-                    Reset
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </Nav>
-          </Collapse>
-        </Navbar>
-      </div>
+      <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
+        <Navbar.Brand href="#home">活動通地圖</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+          <Nav.Link>
+              <NavLink to="/" activeStyle={{ color: "#fa923f" }} exact>home(路由)</NavLink>
+            </Nav.Link>
+            <Nav.Link>
+              <NavLink to="/info" activeStyle={{ color: "#fa923f" }}>info(路由)</NavLink>
+            </Nav.Link>
+            <Nav.Link>
+              <NavLink to="/xvideo18" activeStyle={{ color: "#fa923f" }}>未開放功能(路由)</NavLink>
+            </Nav.Link>
+            <Nav.Link href="#link">#跟/的差別?</Nav.Link>
+            <NavDropdown title="更多的切換" id="basic-nav-dropdown">
+              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.2">
+                Another action
+              </NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="#action/3.4">
+                Separated link
+              </NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
+
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>
+            Signed in as: <a href="#login">Mark Otto</a>
+          </Navbar.Text>
+        </Navbar.Collapse>
+      </Navbar>
     );
   }
 }
