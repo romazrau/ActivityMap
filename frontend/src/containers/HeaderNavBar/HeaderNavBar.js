@@ -19,8 +19,8 @@ export default class Example extends React.Component {
   }
   render() {
     return (
-      <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
-        <Navbar.Brand href="#home">活動通地圖</Navbar.Brand>
+      <Navbar bg="dark" variant="dark" expand="lg" fixed="top" className={styles.header}>
+        <Navbar.Brand href="#home"><i className="fas fa-bullhorn fa-1x"> </i>活動通地圖</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
