@@ -19,10 +19,10 @@ export default class Example extends React.Component {
   }
   render() {
     return (
-      <Navbar bg="dark" variant="dark" expand="lg" fixed="top" className={styles.header}>
-        <Navbar.Brand href="#home"><i className="fas fa-bullhorn fa-1x"> </i>活動通地圖</Navbar.Brand>
+      <Navbar bg="dark" variant="dark" expand="lg" fixed="top" >
+        <Navbar.Brand href="#home" ><i className="fas fa-bullhorn fa-1x"> </i>活動通地圖</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" >
           <Nav className="mr-auto">
               <NavLink to="/" activeStyle={{ color: "#fa923f" }} exact className={styles.navlink}>home(路由)</NavLink>
               <NavLink to="/info" activeStyle={{ color: "#fa923f" }} className={styles.navlink}>info(路由)</NavLink>
@@ -42,7 +42,7 @@ export default class Example extends React.Component {
           </Nav>
         </Navbar.Collapse>
 
-        <Navbar.Collapse className="justify-content-end">
+        <Navbar.Collapse className="justify-content-end" >
           <Navbar.Text>
             Signed in as: <a href="#login">Mark Otto</a>
           </Navbar.Text>
