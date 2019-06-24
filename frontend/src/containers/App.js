@@ -7,16 +7,8 @@ import SlideInfo from "./SlideInfo/SlideInfo";
 import style from "./App.module.css";
 
 class App extends Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this.state = {
-      open: true
-    };
-  }
 
   render() {
-    const { open } = this.state;
 
     return (
       <div>

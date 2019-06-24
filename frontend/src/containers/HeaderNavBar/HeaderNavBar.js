@@ -1,7 +1,7 @@
 import React from "react";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
-// import styles from "./HeaderNavBar.module.css";
+import styles from "./HeaderNavBar.module.css";
 
 export default class Example extends React.Component {
   constructor(props) {
@@ -24,16 +24,10 @@ export default class Example extends React.Component {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-          <Nav.Link>
-              <NavLink to="/" activeStyle={{ color: "#fa923f" }} exact>home(路由)</NavLink>
-            </Nav.Link>
-            <Nav.Link>
-              <NavLink to="/info" activeStyle={{ color: "#fa923f" }}>info(路由)</NavLink>
-            </Nav.Link>
-            <Nav.Link>
-              <NavLink to="/xvideo18" activeStyle={{ color: "#fa923f" }}>未開放功能(路由)</NavLink>
-            </Nav.Link>
-            <Nav.Link href="#link">#跟/的差別?</Nav.Link>
+              <NavLink to="/" activeStyle={{ color: "#fa923f" }} exact className={styles.navlink}>home(路由)</NavLink>
+              <NavLink to="/info" activeStyle={{ color: "#fa923f" }} className={styles.navlink}>info(路由)</NavLink>
+              <NavLink to="/xvideo18" activeStyle={{ color: "#fa923f" }} className={styles.navlink}>未開放功能(路由)</NavLink>
+            {/* <Nav.Link href="#link">#跟/的差別?</Nav.Link> */}
             <NavDropdown title="更多的切換" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
