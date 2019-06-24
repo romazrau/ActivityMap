@@ -1,8 +1,8 @@
 .mainwindow{
     /* position: fixed; */
-    margin-top: 8vh;
-    margin-bottom: 4vh;
-    height: 88vh;
+    margin-top: 56px;
+    margin-bottom: 30px;
+    height: calc(100vh - 86px);
     background-color: rgb(202, 202, 202);
     display: flex ;
 }
@@ -10,4 +10,12 @@
 .slidewindow{
     width: 25vw;
     background-color: rgb(242, 243, 208);
+}
+
+.bottom{
+    height: 30px ;
+    font-size: 10px;
+    padding-top:10px;
+    padding-bottom:10px;
+    color:rgba(255, 255, 255, 0.5);
 }

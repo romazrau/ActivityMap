@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Col, Navbar } from "react-bootstrap";
 
-import style from "./App.module.css";
+import styles from "./App.module.css";
 import HeaderNavBar from "./HeaderNavBar/HeaderNavBar";
 import SlideInfo from "./SlideInfo/SlideInfo";
 import Map from "./MapWindow/MapWindow";
@@ -12,13 +12,14 @@ class App extends Component {
     return (
       <div>
         <BrowserRouter>
+     
           <HeaderNavBar />
-
-          <div className={style.mainwindow}>
+ 
+          <div className={styles.mainwindow}>
             <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
               <Map />
             </Col>
-            <div className={style.slidewindow}>
+            <div className={styles.slidewindow}>
               {/**控制區 */}
               <Switch>
                 <Route exact path="/" component={() => <div>原始</div>} />
@@ -35,9 +36,9 @@ class App extends Component {
             variant="dark"
             expand="lg"
             fixed="bottom"
-            style={{ height: "4vh" }}
+            className={styles.bottom}
           >
-            <Navbar.Text>底部</Navbar.Text>
+            底部 - 開發中的地圖
           </Navbar>
         </BrowserRouter>
       </div>

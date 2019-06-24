@@ -1,13 +1,19 @@
 .header{
-    background-color: "#387D9C";
-    color: "white"   ;
     height: 8vh;
 }
+
 
 .navlink{
     padding-right: .5rem;
     padding-left: .5rem;
     padding: .5rem 1rem;
-    color: rgba(255,255,255,.5);
+    color: rgba(255, 255, 255, 0.5);
 }
 
+.header_slidedown{
+    background-color:rgb(52, 58, 64);
+    min-width: 110vw;
+    padding-left: 5vw;
+    margin-left: -5vw;
+    color: rgba(255, 255, 255, 0.5);
+}
