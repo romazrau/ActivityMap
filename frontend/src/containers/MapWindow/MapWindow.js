@@ -112,7 +112,7 @@ class PublicMap extends Component {
   }
 
   userAction() {
-    this.setState({ center: [13400000, 2800000], zoom: 7 });
+    this.setState({ center: [13530000, 2880000], zoom: 12 });
   }
 
   render() {
@@ -121,7 +121,7 @@ class PublicMap extends Component {
       <div id="map" style={{ width: "100%", height: "100%" }}>
         <div className={styles.float}>
           <button onClick={e => this.userAction()} className={styles.Btn}>
-            setState on click
+            Focus to Taipei
           </button>
           <button onClick={e => this.setLayer("OSM")} className={styles.Btn}>
             OSM
