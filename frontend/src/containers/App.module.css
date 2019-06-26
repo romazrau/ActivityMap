@@ -14,8 +14,14 @@
     z-index: 60;
     width: 25vw;
     height: calc(100vh - 86px);
-    background-color: rgba(242, 243, 208,0.8);
+    background-color: rgb(242, 243, 208);
     animation: slideopen 1s ;
+    opacity:0.8;
+}
+
+.slidewindow:hover{
+    background-color: rgb(242, 243, 208);
+    opacity:1;
 }
 
 .slidewindowClose{
@@ -25,8 +31,13 @@
     z-index: 60;
     width: 0vw;
     height: calc(100vh - 86px);
-    background-color: rgba(242, 243, 208,0.8);
+    background-color: rgb(242, 243, 208);
     animation: slideclose 1s;
+    opacity:0.8;
+}
+
+.slidewindowClose:hover{
+    background-color: rgb(242, 243, 208);
 }
 
 .bottom{
@@ -42,18 +53,21 @@
     top: 45vh;
     right: 25vw;
     z-index: 55;
-    background-color: rgba(91, 190, 124,0.8);
+    background-color: rgb(91, 190, 124);
     height: 10vh;
     width: 5vh;
     padding-top: 3vh;
     padding-bottom: 3vh; 
     border-radius: 5vh 0vh 0vh 5vh; 
     animation: slideshift 1s ;
+    opacity:0.6;
+    text-align: center;
 }
 
 .slideBtn:hover{
     background-color: rgb(91, 190, 124);
     width: 3vh;
+    opacity:1;
 }
 
 .slideBtnClose{
@@ -61,18 +75,21 @@
     top: 45vh;
     right: 0vw;
     z-index: 55;
-    background-color: rgba(91, 190, 124,0.8);
+    background-color: rgb(91, 190, 124);
     height: 10vh;
     width: 3vh;
     padding-top: 3vh;
     padding-bottom: 3vh; 
     border-radius: 5vh 0vh 0vh 5vh;
     animation: slideshiftright 1s ; 
+    opacity:0.6;
+    text-align: center;
 }
 
 .slideBtnClose:hover{
     background-color: rgb(91, 190, 124);
     width: 5vh;
+    opacity:1;
 }
 
 @keyframes slideopen {   

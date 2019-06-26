@@ -41,7 +41,7 @@ class PublicMap extends Component {
           source: new OlSourceOSM() //OSM提供的公式
         })
       },
-      "GoogleMaps": {
+      GoogleMaps: {
         title: "Google Maps",
         type: "base",
         layer: new OlLayerTile({
@@ -80,10 +80,18 @@ class PublicMap extends Component {
     //function setLayer(idx)   切換底圖顯示
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
-      if (tlayer.type === "base")
+      if (tlayer.type === "base"){
         this.layers[Object.keys(this.layers)[i]].layer.setVisible(
           Object.keys(this.layers)[i] === key
         );
+        let baseBtn = document.getElementById(Object.keys(this.layers)[i]+"Btn").classList
+        if( Object.keys(this.layers)[i] === key){
+          baseBtn.add(styles.BtnFocus)
+        }else{
+          baseBtn.remove(styles.BtnFocus)
+        }
+      }
+        
     }
   }
 
@@ -123,12 +131,13 @@ class PublicMap extends Component {
           <button onClick={e => this.userAction()} className={styles.Btn}>
             Focus to Taipei
           </button>
-          <button onClick={e => this.setLayer("OSM")} className={styles.Btn}>
+          <button onClick={e => this.setLayer("OSM")} className={styles.Btn} id="OSMBtn">
             OSM
           </button>
           <button
             onClick={e => this.setLayer("GoogleMaps")}
             className={styles.Btn}
+            id="GoogleMapsBtn"
           >
             GMAP
           </button>
