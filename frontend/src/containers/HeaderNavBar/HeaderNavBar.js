@@ -57,7 +57,7 @@ class ConnectedHeaderNavBar extends React.Component {
 
         <Navbar.Collapse className="justify-content-end" >
           <Navbar.Text>
-            Signed in as: <a href="#login">Mark Otto</a>
+            Signed in as:  <NavLink to="/authenticate" activeStyle={{ color: "#fa923f" }}>None</NavLink>
           </Navbar.Text>
         </Navbar.Collapse>
       </Navbar>

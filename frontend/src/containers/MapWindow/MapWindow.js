@@ -120,7 +120,7 @@ class PublicMap extends Component {
   }
 
   userAction() {
-    this.setState({ center: [13530000, 2880000], zoom: 12 });
+    this.setState({ center: [13530000, 2880000], zoom: 11.5 });
   }
 
   render() {

@@ -3,7 +3,7 @@
     margin-top: 56px;
     margin-bottom: 30px;
     height: calc(100vh - 86px);
-    background-color: rgb(202, 202, 202);
+    background-color: rgb(170, 211, 223);
     display: flex ;
 }
 
@@ -16,7 +16,7 @@
     height: calc(100vh - 86px);
     background-color: rgb(242, 243, 208);
     animation: slideopen 1s ;
-    opacity:0.8;
+    opacity:0.9;
 }
 
 .slidewindow:hover{
@@ -55,7 +55,7 @@
     z-index: 55;
     background-color: rgb(91, 190, 124);
     height: 10vh;
-    width: 5vh;
+    width: 3vh;
     padding-top: 3vh;
     padding-bottom: 3vh; 
     border-radius: 5vh 0vh 0vh 5vh; 
