@@ -7,6 +7,11 @@ import OlSourceOSM from "ol/source/OSM";
 import OlSourceXYZ from "ol/source/XYZ";
 import OLSourceVector from "ol/source/Vector";
 import OlFormatGeoJson from "ol/format/GeoJSON";
+import OlStyleStyle from "ol/style/Style";
+import OlStyleIcon from "ol/style/Icon";
+import OlStyleStroke from "ol/style/Stroke";
+import OlStyleFill from "ol/style/Fill";
+import OlStyleCircle from "ol/style/Circle"
 import { register } from "ol/proj/proj4";
 import { fromLonLat, get } from "ol/proj";
 import Proj4 from "proj4/dist/proj4";
@@ -29,6 +34,42 @@ class PublicMap extends Component {
 
     this.state = { center: fromLonLat([120.5, 23.62]), zoom: 7 };
 
+    this.styles = {
+      'activity': [new OlStyleStyle({
+                            image: new OlStyleIcon(({
+                              anchor: [4,32],
+                              anchorXUnits: 'pixels',
+                              anchorYUnits: 'pixels',
+                              opacity: 1.00,
+                              crossOrigin: 'anonymous',
+                              src: '../../img/maps-and-flags_2.png',
+                            }))
+                          }),],
+      'metroline': [new OlStyleStyle({
+            stroke: new OlStyleStroke({
+                color: 'rgba(100, 100, 255, 0.9)',
+                width: 5,
+                lineDash: [4,8]   //line dash pattern [line, space]
+            })
+        })],
+      'bird': new OlStyleStyle({
+          fill: new OlStyleFill({
+              color: 'rgba(255, 255, 255, 0.5)'
+          }),
+          stroke: new OlStyleStroke({
+              color: '#ff3333',
+              width: 2
+          }),
+          image: new OlStyleCircle({
+              radius: 7,
+              fill: new OlStyleFill({
+                  color: '#ff3333'
+              })
+          })
+      })
+    };
+
+
     this.layers = {
       //底圖
       OSM: {
@@ -40,6 +81,17 @@ class PublicMap extends Component {
           source: new OlSourceOSM() //OSM提供的公式
         })
       },
+      GoogleMapsS: {
+        title: "Google Maps S",
+        type: "base",
+        layer: new OlLayerTile({
+          visible: false,
+          source: new OlSourceXYZ({
+            crossOrigin: "anonymous",
+            url: "https://mt{0-3}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" //估狗規定的網址，lyrs=m可以改變成不同圖層(分開寫就是多個底圖!)
+          })
+        })
+      },
       GoogleMaps: {
         title: "Google Maps",
         type: "base",
@@ -47,7 +99,7 @@ class PublicMap extends Component {
           visible: false,
           source: new OlSourceXYZ({
             crossOrigin: "anonymous",
-            url: "https://mt{0-3}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" //估狗規定的網址，lyrs=m可以改變成不同圖層(分開寫就是多個底圖!)
+            url: "https://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" //估狗規定的網址，lyrs=m可以改變成不同圖層(分開寫就是多個底圖!)
           })
         })
       },
@@ -59,7 +111,8 @@ class PublicMap extends Component {
           source: new OLSourceVector({
             format: new OlFormatGeoJson(),
             url: layerMetroline
-          })
+          }),
+          style: this.styles['metroline']
         })
       },
       activity: {
@@ -78,7 +131,8 @@ class PublicMap extends Component {
           source: new OLSourceVector({
             format: new OlFormatGeoJson(),
             url: layerBird
-          })
+          }),
+          style: this.styles['activity']
         })
       }
     };
@@ -92,25 +146,7 @@ class PublicMap extends Component {
       })
     });
 
-    // this.styles = {
-    //   'activity': [new ol.style.Style({
-    //                         image: new ol.style.Icon(({
-    //                           anchor: [4,32],
-    //                           anchorXUnits: 'pixels',
-    //                           anchorYUnits: 'pixels',
-    //                           opacity: 1.00,
-    //                           crossOrigin: 'anonymous',
-    //                           src: './maps-and-flags_2.png',
-    //                         }))
-    //                       }),],
-    //   'metroline': [new ol.style.Style({
-    //         stroke: new ol.style.Stroke({
-    //             color: 'rgba(100, 100, 255, 0.9)',
-    //             width: 5,
-    //             lineDash: [4,8]   //line dash pattern [line, space]
-    //         })
-    //     })],
-    // };
+    
   };
   
 
@@ -131,13 +167,12 @@ class PublicMap extends Component {
         }
         var features = (new OlFormatGeoJson()).readFeatures(geojson,options);
         source.addFeatures(features);
-        console.log(features.length);
-        console.log(source)
+        // console.log(features.length);
+        // console.log(source)
     return source;
   }
 
-  setLayer(key) {
-    //function setLayer(idx)   切換底圖顯示
+  setLayer(key) { //切換底圖層顯示
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
       if (tlayer.type === "base") {
@@ -156,13 +191,37 @@ class PublicMap extends Component {
     }
   }
 
+  setOverLayer(key) { //切換圖層顯示
+    let btnstyle = document.getElementById(key+"Btn");
+    if (btnstyle.className === styles.BtnFocus){
+      this.layers[key].layer.setVisible(false);
+      btnstyle.classList.remove(styles.BtnFocus);
+      btnstyle.classList.add(styles.Btn);
+    }else{
+      this.layers[key].layer.setVisible(true);
+      btnstyle.classList.remove(styles.Btn);
+      btnstyle.classList.add(styles.BtnFocus);
+    }
+  }
+
+  initLayers() { //上圖層STYLE
+    for (let i = 0; i < Object.keys(this.layers).length; i++) {
+      var tlayer = this.layers[Object.keys(this.layers)[i]];
+      if(tlayer.type === 'overlay') {
+        tlayer.layer.setZIndex(10000-i);
+        tlayer.layer.setStyle(this.styles[Object.keys(this.layers)[i]]);
+      }
+    }
+  }
+
   updateMap() {
     this.olmap.getView().setCenter(this.state.center);
     this.olmap.getView().setZoom(this.state.zoom);
   }
 
   componentDidMount() {
-    this.setLayer("OSM");
+    this.initLayers()
+    this.setLayer("GoogleMaps");
     this.olmap.setTarget("map");
 
     // Listen to map changes
@@ -199,15 +258,31 @@ class PublicMap extends Component {
             id="OSMBtn"
             style={{ borderRadius: "4px 0 0 4px" }}
           >
-            OSM
+            OSM街道圖
           </button>
           <button
             onClick={e => this.setLayer("GoogleMaps")}
             className={styles.Btn}
             id="GoogleMapsBtn"
+            style={{ borderRadius: "0 0px 0px 0" }}
+          >
+            估狗街道圖
+          </button>
+          <button
+            onClick={e => this.setLayer("GoogleMapsS")}
+            className={styles.Btn}
+            id="GoogleMapsSBtn"
             style={{ borderRadius: "0 4px 4px 0" }}
           >
-            GMAP
+            估狗衛星影像
+          </button>
+          &nbsp;
+          <button
+            onClick={() => this.setOverLayer("metroline")}
+            className={styles.BtnFocus}
+            id="metrolineBtn"
+          >
+            台北捷運
           </button>
         </div>
       </div>
