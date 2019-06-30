@@ -19,6 +19,7 @@ import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
 import layerAct from "../../data_geo/act.json";
 import layerBird from "../../data_geo/bird.geojson";
+import imglocal from "../../img/maps-and-flags_2.png"
 
 //地圖OSM、google提供3857
 class PublicMap extends Component {
@@ -36,7 +37,7 @@ class PublicMap extends Component {
             anchorYUnits: "pixels",
             opacity: 1.0,
             crossOrigin: "anonymous",
-            src: "../../img/maps-and-flags_2.png"
+            src: imglocal
           })
         })
       ],
@@ -44,24 +45,21 @@ class PublicMap extends Component {
         new OlStyleStyle({
           stroke: new OlStyleStroke({
             color: "rgba(100, 100, 255, 0.9)",
-            width: 5,
+            width: 4,
             lineDash: [4, 8] //line dash pattern [line, space]
           })
         })
       ],
       bird: new OlStyleStyle({
-        fill: new OlStyleFill({
-          color: "rgba(255, 255, 255, 0.5)"
-        }),
-        stroke: new OlStyleStroke({
-          color: "#ff3333",
-          width: 2
-        }),
         image: new OlStyleCircle({
           radius: 7,
           fill: new OlStyleFill({
-            color: "#ff3333"
-          })
+            color: "#ff0000"
+          }),
+          stroke: new OlStyleStroke({
+            color: "rgba(255, 255, 255, 0.5)",
+            width: 2
+          }),
         })
       })
     };
@@ -185,8 +183,7 @@ class PublicMap extends Component {
     }
   }
 
-  setOverLayer(key) {
-    //切換圖層顯示
+  setOverLayer(key) { //切換圖層顯示
     let btnstyle = document.getElementById(key + "Btn");
     if (btnstyle.className === styles.BtnFocus) {
       this.layers[key].layer.setVisible(false);
@@ -199,8 +196,7 @@ class PublicMap extends Component {
     }
   }
 
-  initLayers() {
-    //上圖層STYLE
+  initLayers() { //上圖層STYLE
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
       if (tlayer.type === "overlay") {
