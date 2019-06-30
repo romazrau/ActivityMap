@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+// import {withRouter} from 'react-router-dom' 
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import OlLayerTile from "ol/layer/Tile";
@@ -21,8 +22,15 @@ import layerAct from "../../data_geo/act.json";
 import layerBird from "../../data_geo/bird.geojson";
 import imglocal from "../../img/maps-and-flags_2.png"
 
-//地圖OSM、google提供3857
-class PublicMap extends Component {
+import { connect } from "react-redux";
+import { showFeatureInfo } from "../../redux/actions/index";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    showFeatureInfo: (info) => dispatch(showFeatureInfo(info))
+  };
+}
+class ConnectedPublicMap extends Component {  //ol預設投影:3857
   constructor(props) {
     super(props);
 
@@ -229,10 +237,13 @@ class PublicMap extends Component {
   
     var select = new OlSelect(); 
     this.olmap.addInteraction(select);
+    const showFeatureInfo = this.props.showFeatureInfo
     select.on("select", function(e) {
       if(e.selected[0]!==undefined&&e.selected[0].values_.geometry.getType()==="Point"){
         // console.log(e.target.getFeatures())
         console.log(e.selected[0].values_)
+        const { LAT ,LONG } = e.selected[0].values_
+        showFeatureInfo([LAT,LONG])
       }
      
     });
@@ -244,7 +255,7 @@ class PublicMap extends Component {
     if (center === nextState.center && zoom === nextState.zoom) return false;
     return true;
   }
-
+  
   render() {
     this.updateMap(); // Update map on render?
     return (
@@ -292,4 +303,5 @@ class PublicMap extends Component {
   }
 }
 
+const PublicMap = connect(null,mapDispatchToProps)(ConnectedPublicMap);  //
 export default PublicMap;
