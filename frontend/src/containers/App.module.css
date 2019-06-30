@@ -17,6 +17,7 @@
     background-color: rgb(242, 243, 208);
     animation: slideopen 1s ;
     opacity:0.9;
+    overflow-y: scroll;
 }
 
 .slidewindow:hover{

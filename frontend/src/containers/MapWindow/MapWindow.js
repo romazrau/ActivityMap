@@ -11,10 +11,9 @@ import OlStyleStyle from "ol/style/Style";
 import OlStyleIcon from "ol/style/Icon";
 import OlStyleStroke from "ol/style/Stroke";
 import OlStyleFill from "ol/style/Fill";
-import OlStyleCircle from "ol/style/Circle"
-import { register } from "ol/proj/proj4";
-import { fromLonLat, get } from "ol/proj";
-import Proj4 from "proj4/dist/proj4";
+import OlStyleCircle from "ol/style/Circle";
+import OlSelect from "ol/interaction/Select.js";
+import { fromLonLat as OlFromLonLat, get as OlGet} from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
@@ -22,53 +21,50 @@ import layerAct from "../../data_geo/act.json";
 import layerBird from "../../data_geo/bird.geojson";
 
 //地圖OSM、google提供3857
-//? proj4 轉換座標用
-Proj4.defs('EPSG:3826', "+title=二度分帶：TWD97 TM2 台灣 +proj=tmerc  +lat_0=0 +lon_0=121 +k=0.9999 +x_0=250000 +y_0=0 +ellps=GRS80 +units=公尺 +no_defs");
-Proj4.defs('urn:ogc:def:crs:OGC:1.3:CRS:84', Proj4.defs('EPSG:4326'));
-Proj4.defs('urn:ogc:def:crs:EPSG::3826', Proj4.defs('EPSG:3826'));
-register(Proj4);
-
 class PublicMap extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { center: fromLonLat([120.5, 23.62]), zoom: 7 };
+    this.state = { center: OlFromLonLat([120.5, 23.62]), zoom: 7 };
 
     this.styles = {
-      'activity': [new OlStyleStyle({
-                            image: new OlStyleIcon(({
-                              anchor: [4,32],
-                              anchorXUnits: 'pixels',
-                              anchorYUnits: 'pixels',
-                              opacity: 1.00,
-                              crossOrigin: 'anonymous',
-                              src: '../../img/maps-and-flags_2.png',
-                            }))
-                          }),],
-      'metroline': [new OlStyleStyle({
-            stroke: new OlStyleStroke({
-                color: 'rgba(100, 100, 255, 0.9)',
-                width: 5,
-                lineDash: [4,8]   //line dash pattern [line, space]
-            })
-        })],
-      'bird': new OlStyleStyle({
-          fill: new OlStyleFill({
-              color: 'rgba(255, 255, 255, 0.5)'
-          }),
-          stroke: new OlStyleStroke({
-              color: '#ff3333',
-              width: 2
-          }),
-          image: new OlStyleCircle({
-              radius: 7,
-              fill: new OlStyleFill({
-                  color: '#ff3333'
-              })
+      activity: [
+        new OlStyleStyle({
+          image: new OlStyleIcon({
+            anchor: [4, 32],
+            anchorXUnits: "pixels",
+            anchorYUnits: "pixels",
+            opacity: 1.0,
+            crossOrigin: "anonymous",
+            src: "../../img/maps-and-flags_2.png"
           })
+        })
+      ],
+      metroline: [
+        new OlStyleStyle({
+          stroke: new OlStyleStroke({
+            color: "rgba(100, 100, 255, 0.9)",
+            width: 5,
+            lineDash: [4, 8] //line dash pattern [line, space]
+          })
+        })
+      ],
+      bird: new OlStyleStyle({
+        fill: new OlStyleFill({
+          color: "rgba(255, 255, 255, 0.5)"
+        }),
+        stroke: new OlStyleStroke({
+          color: "#ff3333",
+          width: 2
+        }),
+        image: new OlStyleCircle({
+          radius: 7,
+          fill: new OlStyleFill({
+            color: "#ff3333"
+          })
+        })
       })
     };
-
 
     this.layers = {
       //底圖
@@ -112,7 +108,7 @@ class PublicMap extends Component {
             format: new OlFormatGeoJson(),
             url: layerMetroline
           }),
-          style: this.styles['metroline']
+          style: this.styles["metroline"]
         })
       },
       activity: {
@@ -132,7 +128,7 @@ class PublicMap extends Component {
             format: new OlFormatGeoJson(),
             url: layerBird
           }),
-          style: this.styles['activity']
+          style: this.styles["activity"]
         })
       }
     };
@@ -145,34 +141,32 @@ class PublicMap extends Component {
         zoom: this.state.zoom
       })
     });
-
-    
-  };
-  
+  }
 
   //! 迷之公式
-  loadJsonSource(geojson){
-    var source=new OLSourceVector({});
+  loadJsonSource(geojson) {
+    var source = new OLSourceVector({});
 
-        var options={};
-        if(
-          typeof(geojson.crs                )!='undefined' &&
-          typeof(geojson.crs.properties     )!='undefined' &&
-          typeof(geojson.crs.properties.name)!='undefined'
-        ){
-          options={
-            dataProjection: get(geojson.crs.properties.name),    //'EPSG:3826','EPSG:4326'
-            featureProjection: get('EPSG:3857'),
-          };
-        }
-        var features = (new OlFormatGeoJson()).readFeatures(geojson,options);
-        source.addFeatures(features);
-        // console.log(features.length);
-        // console.log(source)
+    var options = {};
+    if (
+      typeof geojson.crs != "undefined" &&
+      typeof geojson.crs.properties != "undefined" &&
+      typeof geojson.crs.properties.name != "undefined"
+    ) {
+      options = {
+        dataProjection: OlGet(geojson.crs.properties.name), //'EPSG:3826','EPSG:4326'
+        featureProjection: OlGet("EPSG:3857")
+      };
+    }
+    var features = new OlFormatGeoJson().readFeatures(geojson, options);
+    source.addFeatures(features);
+    // console.log(features.length);
+    // console.log(source)
     return source;
   }
 
-  setLayer(key) { //切換底圖層顯示
+  setLayer(key) {
+    //切換底圖層顯示
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
       if (tlayer.type === "base") {
@@ -191,24 +185,26 @@ class PublicMap extends Component {
     }
   }
 
-  setOverLayer(key) { //切換圖層顯示
-    let btnstyle = document.getElementById(key+"Btn");
-    if (btnstyle.className === styles.BtnFocus){
+  setOverLayer(key) {
+    //切換圖層顯示
+    let btnstyle = document.getElementById(key + "Btn");
+    if (btnstyle.className === styles.BtnFocus) {
       this.layers[key].layer.setVisible(false);
       btnstyle.classList.remove(styles.BtnFocus);
       btnstyle.classList.add(styles.Btn);
-    }else{
+    } else {
       this.layers[key].layer.setVisible(true);
       btnstyle.classList.remove(styles.Btn);
       btnstyle.classList.add(styles.BtnFocus);
     }
   }
 
-  initLayers() { //上圖層STYLE
+  initLayers() {
+    //上圖層STYLE
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
-      if(tlayer.type === 'overlay') {
-        tlayer.layer.setZIndex(10000-i);
+      if (tlayer.type === "overlay") {
+        tlayer.layer.setZIndex(10000 - i);
         tlayer.layer.setStyle(this.styles[Object.keys(this.layers)[i]]);
       }
     }
@@ -219,9 +215,13 @@ class PublicMap extends Component {
     this.olmap.getView().setZoom(this.state.zoom);
   }
 
+  focus2taipei() {
+    this.setState({ center: [13530000, 2883000], zoom: 11.5 });
+  }
+
   componentDidMount() {
-    this.initLayers()
-    this.setLayer("GoogleMaps");
+    this.initLayers();
+    this.setLayer("OSM");
     this.olmap.setTarget("map");
 
     // Listen to map changes
@@ -229,6 +229,16 @@ class PublicMap extends Component {
       let center = this.olmap.getView().getCenter();
       let zoom = this.olmap.getView().getZoom();
       this.setState({ center, zoom });
+    });
+  
+    var select = new OlSelect(); 
+    this.olmap.addInteraction(select);
+    select.on("select", function(e) {
+      if(e.selected[0]!==undefined&&e.selected[0].values_.geometry.getType()==="Point"){
+        // console.log(e.target.getFeatures())
+        console.log(e.selected[0].values_)
+      }
+     
     });
   }
 
@@ -239,16 +249,12 @@ class PublicMap extends Component {
     return true;
   }
 
-  userAction() {
-    this.setState({ center: [13530000, 2880000], zoom: 11.5 });
-  }
-
   render() {
     this.updateMap(); // Update map on render?
     return (
       <div id="map" style={{ width: "100%", height: "100%" }}>
         <div className={styles.float}>
-          <button onClick={e => this.userAction()} className={styles.Btn}>
+          <button onClick={e => this.focus2taipei()} className={styles.Btn}>
             Focus to Taipei
           </button>
           &nbsp;

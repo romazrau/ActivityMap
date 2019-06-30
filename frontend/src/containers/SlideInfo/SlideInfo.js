@@ -22,7 +22,7 @@ class SlideInfo extends Component {
                 if (loading) return <p>Loading...</p>;
                 if (error) return <p>Error :(((</p>;
 
-                return <div>Query: {data.actInfo[0].id}</div>;
+                return <div>Query: {data.actInfo[0].id},title: {data.actInfo[0].title}</div>;
               }}
             </Query>
           </Container>
