@@ -6,6 +6,10 @@ import { connect } from "react-redux";
 import styles from "./HeaderNavBar.module.css";
 import { slidewindowShow } from "../../redux/actions/index";
 
+
+const mapStateToProps = state => {
+  return { userid: state.userid };
+};
 function mapDispatchToProps(dispatch) {
   return {
     chickSlidewindowOpen: () => dispatch(slidewindowShow())
@@ -57,7 +61,7 @@ class ConnectedHeaderNavBar extends React.Component {
 
         <Navbar.Collapse className="justify-content-end" >
           <Navbar.Text>
-            Signed in as:  <NavLink to="/authenticate" activeStyle={{ color: "#fa923f" }}>None</NavLink>
+            Signed in as:  <NavLink to="/authenticate" activeStyle={{ color: "#fa923f" }}>{this.props.userid?this.props.userid:"None"}</NavLink>
           </Navbar.Text>
         </Navbar.Collapse>
       </Navbar>
@@ -65,5 +69,5 @@ class ConnectedHeaderNavBar extends React.Component {
   }
 }
 
-const HeaderNavBar = connect(null, mapDispatchToProps)(ConnectedHeaderNavBar);
+const HeaderNavBar = connect(mapStateToProps, mapDispatchToProps)(ConnectedHeaderNavBar);
 export default HeaderNavBar;

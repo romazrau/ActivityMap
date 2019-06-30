@@ -3,7 +3,15 @@ import { Form, Col, Button, Container, Card, Image } from "react-bootstrap";
 
 import styles from "./Authenticate.module.css";
 
-class Authenticate extends Component {
+import { connect } from "react-redux";
+import { userIDupdate } from "../../redux/actions/index";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    userIDupdate: (e) => dispatch(userIDupdate(e))
+  };
+}
+class ConnectedAuthenticate extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,6 +70,7 @@ class Authenticate extends Component {
         return;
       }
     }
+
     //   const { formUser,formTitle, formBody } = this.state;
     //   if (!formTitle || !formBody) return;
     //   this.createPost({
@@ -72,6 +81,10 @@ class Authenticate extends Component {
     //       authorId: Number(formUser)
     //     }
     //   });
+
+    //以下成功後的動作
+    this.props.userIDupdate(this.state.formID)
+    this.props.history.push("/info")
 
     this.setState({
       formID: "",
@@ -259,4 +272,5 @@ class Authenticate extends Component {
   }
 }
 
+const Authenticate = connect(null, mapDispatchToProps)(ConnectedAuthenticate);
 export default Authenticate;
