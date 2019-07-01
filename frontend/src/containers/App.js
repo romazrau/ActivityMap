@@ -9,15 +9,19 @@ import SlideInfo from "./SlideInfo/SlideInfo";
 import Map from "./MapWindow/MapWindow";
 import Home from "../components/Home/Home";
 import Authenticate from "./Authenticate/Authenticate"
-import { slidewindowToggle } from "../redux/actions/index";
+import { slidewindowToggle,slidewindowShow } from "../redux/actions/index";
 
 const mapStateToProps = state => {
-  return { isSlidewindowShow: state.isSlidewindowShow };
+  return { 
+    isSlidewindowShow: state.isSlidewindowShow ,
+    selcetFeatureInfo: state.selcetFeatureInfo
+  };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    chickSlidewindowToggle: () => dispatch(slidewindowToggle())
+    chickSlidewindowToggle: () => dispatch(slidewindowToggle()),
+    chickSlidewindowOpen: () => dispatch(slidewindowShow())
   };
 }
 
@@ -48,6 +52,9 @@ class ConnectedApp extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.isSlidewindowShow === 1 && document.getElementById("slidewindow").className === styles.slidewindowClose) {
       this.slidewindowToggle();
+    }
+    if (this.props.selcetFeatureInfo!==nextProps.selcetFeatureInfo){
+      this.props.chickSlidewindowOpen();
     }
     return false;
   }

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import {withRouter} from 'react-router-dom' 
+import {withRouter} from 'react-router-dom'
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import OlLayerTile from "ol/layer/Tile";
@@ -9,46 +9,45 @@ import OlSourceXYZ from "ol/source/XYZ";
 import OLSourceVector from "ol/source/Vector";
 import OlFormatGeoJson from "ol/format/GeoJSON";
 import OlStyleStyle from "ol/style/Style";
-import OlStyleIcon from "ol/style/Icon";
 import OlStyleStroke from "ol/style/Stroke";
 import OlStyleFill from "ol/style/Fill";
 import OlStyleCircle from "ol/style/Circle";
 import OlSelect from "ol/interaction/Select.js";
-import { fromLonLat as OlFromLonLat, get as OlGet} from "ol/proj";
+import { fromLonLat as OlFromLonLat, get as OlGet } from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
-import layerAct from "../../data_geo/act.json";
+import layerAct from "../../data_geo/act.geojson";
 import layerBird from "../../data_geo/bird.geojson";
-import imglocal from "../../img/maps-and-flags_2.png"
 
 import { connect } from "react-redux";
 import { showFeatureInfo } from "../../redux/actions/index";
 
 function mapDispatchToProps(dispatch) {
   return {
-    showFeatureInfo: (info) => dispatch(showFeatureInfo(info))
+    showFeatureInfo: info => dispatch(showFeatureInfo(info))
   };
 }
-class ConnectedPublicMap extends Component {  //ol預設投影:3857
+class ConnectedPublicMap extends Component {
+  //ol預設投影:3857
   constructor(props) {
     super(props);
 
     this.state = { center: OlFromLonLat([120.5, 23.62]), zoom: 7 };
 
     this.styles = {
-      activity: [
-        new OlStyleStyle({
-          image: new OlStyleIcon({
-            anchor: [4, 32],
-            anchorXUnits: "pixels",
-            anchorYUnits: "pixels",
-            opacity: 1.0,
-            crossOrigin: "anonymous",
-            src: imglocal
-          })
-        })
-      ],
+      // activity: [
+      //   new OlStyleStyle({
+      //     image: new OlStyleIcon({
+      //       anchor: [4, 32],
+      //       anchorXUnits: "pixels",
+      //       anchorYUnits: "pixels",
+      //       opacity: 1.0,
+      //       crossOrigin: "anonymous",
+      //       src: imglocal
+      //     })
+      //   })
+      // ],
       metroline: [
         new OlStyleStyle({
           stroke: new OlStyleStroke({
@@ -67,7 +66,7 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
           stroke: new OlStyleStroke({
             color: "rgba(255, 255, 255, 0.5)",
             width: 2
-          }),
+          })
         })
       })
     };
@@ -113,8 +112,7 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
           source: new OLSourceVector({
             format: new OlFormatGeoJson(),
             url: layerMetroline
-          }),
-          style: this.styles["metroline"]
+          })
         })
       },
       activity: {
@@ -122,7 +120,7 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
         type: "overlay",
         layer: new OlLayerVector({
           visible: true,
-          source: this.loadJsonSource(layerAct)
+          source: this.loadJsonSourceWithAjax(layerAct)
         })
       },
       bird: {
@@ -133,8 +131,7 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
           source: new OLSourceVector({
             format: new OlFormatGeoJson(),
             url: layerBird
-          }),
-          style: this.styles["activity"]
+          })
         })
       }
     };
@@ -150,25 +147,40 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
   }
 
   //! 迷之公式
-  loadJsonSource(geojson) {
+  loadJsonSourceWithAjax(url) {
     var source = new OLSourceVector({});
+    fetch(url)
+      .then(res => res.json())
+      .then(
+        geojson => {
+          var options = {};
+          if (
+            typeof geojson.crs != "undefined" &&
+            typeof geojson.crs.properties != "undefined" &&
+            typeof geojson.crs.properties.name != "undefined"
+          ) {
+            options = {
+              dataProjection: OlGet("EPSG:4326"), //'EPSG:3826','EPSG:4326'
+              featureProjection: OlGet("EPSG:3857")
+            };
+          }
+          var features = new OlFormatGeoJson().readFeatures(geojson, options);
+          source.addFeatures(features);
 
-    var options = {};
-    if (
-      typeof geojson.crs != "undefined" &&
-      typeof geojson.crs.properties != "undefined" &&
-      typeof geojson.crs.properties.name != "undefined"
-    ) {
-      options = {
-        dataProjection: OlGet(geojson.crs.properties.name), //'EPSG:3826','EPSG:4326'
-        featureProjection: OlGet("EPSG:3857")
-      };
-    }
-    var features = new OlFormatGeoJson().readFeatures(geojson, options);
-    source.addFeatures(features);
-    // console.log(features.length);
-    // console.log(source)
-    return source;
+          console.log(features.length);
+          console.log(source);
+          return source;
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        error => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      );
   }
 
   setLayer(key) {
@@ -191,7 +203,8 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
     }
   }
 
-  setOverLayer(key) { //切換圖層顯示
+  setOverLayer(key) {
+    //切換圖層顯示
     let btnstyle = document.getElementById(key + "Btn");
     if (btnstyle.className === styles.BtnFocus) {
       this.layers[key].layer.setVisible(false);
@@ -204,7 +217,8 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
     }
   }
 
-  initLayers() { //上圖層STYLE
+  initLayers() {
+    //上圖層STYLE
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
       if (tlayer.type === "overlay") {
@@ -223,6 +237,16 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
     this.setState({ center: [13530000, 2883000], zoom: 11.5 });
   }
 
+  router2info=(e)=> {
+    this.props.history.push(`/info/${e}`);
+  }
+
+  // source: new OLSourceVector({
+  //   features: (new OlFormatGeoJson()).readFeatures(layerAct, {     // 用readFeatures方法可以自定义坐标系
+  //     dataProjection: 'EPSG:4326',    // 设定JSON数据使用的坐标系
+  //     featureProjection: 'EPSG:3857' // 设定当前地图使用的feature的坐标系
+  // })
+
   componentDidMount() {
     this.initLayers();
     this.setLayer("OSM");
@@ -234,18 +258,22 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
       let zoom = this.olmap.getView().getZoom();
       this.setState({ center, zoom });
     });
-  
-    var select = new OlSelect(); 
+
+    var select = new OlSelect();
     this.olmap.addInteraction(select);
-    const showFeatureInfo = this.props.showFeatureInfo
+    const showFeatureInfo = this.props.showFeatureInfo;
+    const router2info =this.router2info;
     select.on("select", function(e) {
-      if(e.selected[0]!==undefined&&e.selected[0].values_.geometry.getType()==="Point"){
+      if (
+        e.selected[0] !== undefined &&
+        e.selected[0].values_.geometry.getType() === "Point"
+      ) {
         // console.log(e.target.getFeatures())
-        console.log(e.selected[0].values_)
-        const { LAT ,LONG } = e.selected[0].values_
-        showFeatureInfo([LAT,LONG])
+        console.log(e.selected[0].values_);
+        const { LAT, LONG } = e.selected[0].values_;
+        showFeatureInfo([LAT, LONG]);
+        router2info("這邊放title")
       }
-     
     });
   }
 
@@ -255,7 +283,7 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
     if (center === nextState.center && zoom === nextState.zoom) return false;
     return true;
   }
-  
+
   render() {
     this.updateMap(); // Update map on render?
     return (
@@ -303,5 +331,8 @@ class ConnectedPublicMap extends Component {  //ol預設投影:3857
   }
 }
 
-const PublicMap = connect(null,mapDispatchToProps)(ConnectedPublicMap);  //
-export default PublicMap;
+const PublicMap = connect(
+  null,
+  mapDispatchToProps
+)(ConnectedPublicMap); //
+export default withRouter(PublicMap);

@@ -13,12 +13,13 @@ const mapStateToProps = state => {
   return { selcetFeatureInfo: state.selcetFeatureInfo };
 };
 class ConnectedSlideInfo extends Component {
+
     render() {
       let display= null;
         if(!this.props.selcetFeatureInfo){
           display= <h5>點擊地圖選取活動資訊</h5>
         }else{
-          display= <Row>{this.props.selcetFeatureInfo}有資訊喔</Row>
+          display= <div>{this.props.selcetFeatureInfo}有資訊喔</div>
         }
 
       return (
@@ -29,8 +30,8 @@ class ConnectedSlideInfo extends Component {
               {({ loading, error, data, subscribeToMore }) => {
                 if (loading) return <p>Loading...</p>;
                 if (error) return <p>Error :(((</p>;
-
-                return <div>Query: {data.actInfo[0].id},title: {data.actInfo[0].title}</div>;
+                if (data.actInfo) return <div>Query: {data.actInfo[0].id},title: {data.actInfo[0].title}</div>;
+                return <p>資料庫連接失敗</p>
               }}
             </Query></Row>
           </Container>

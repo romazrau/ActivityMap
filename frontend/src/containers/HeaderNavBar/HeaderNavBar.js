@@ -30,7 +30,7 @@ class ConnectedHeaderNavBar extends React.Component {
     });
   }
   chickSlidewindowOpen=()=>{
-    console.log("Header Navlink clicked");
+    // console.log("Header Navlink clicked");
     this.props.chickSlidewindowOpen();
   }
 
