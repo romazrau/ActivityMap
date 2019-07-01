@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { Row,Container} from "react-bootstrap";
+import { Container,Col} from "react-bootstrap";
 import { Query } from "react-apollo"; //, Mutation,Subscription
 
+import styles from "./SlideInfo.module.css"
 import { connect } from "react-redux";
 import {
     ACTINFO_INDIVIDUAL_QUERY,
   } from "../../graphql";
 
-// import style from "./SlideInfo.module.css"
 
 const mapStateToProps = state => {
   return { selcetFeatureInfo: state.selcetFeatureInfo };
@@ -17,23 +17,58 @@ class ConnectedSlideInfo extends Component {
     render() {
       let display= null;
         if(!this.props.selcetFeatureInfo){
-          display= <h5>點擊地圖選取活動資訊</h5>
+          display= <Col><h5>點擊地圖選取活動資訊</h5></Col>
         }else{
-          display= <div>{this.props.selcetFeatureInfo}有資訊喔</div>
+          display= (
+            <div>
+            <h4>{this.props.selcetFeatureInfo[1]}</h4>
+            <hr/>
+            <table>
+              <tbody>
+                <tr>
+                  <th className={styles.tabletitle}>
+                  活動地點:
+                  </th>
+                  <td>
+                  {this.props.selcetFeatureInfo[4]}
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                  開始時間:
+                  </th>
+                  <td>
+                  {this.props.selcetFeatureInfo[2]}
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                  結束時間:
+                  </th>
+                  <td>
+                  {this.props.selcetFeatureInfo[3]}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <hr/>
+            <div>{this.props.selcetFeatureInfo[5]}</div>
+            </div>
+          )
         }
 
       return (
           <Container style={{paddingTop:"2vh"}}>
-              <Row>{display}</Row>
-              <Row>----</Row>
-              <Row><Query query={ACTINFO_INDIVIDUAL_QUERY} variables={{ id: 10 }}>
+              {display}
+              <hr/>
+              <Col><Query query={ACTINFO_INDIVIDUAL_QUERY} variables={{ id: 10 }}>
               {({ loading, error, data, subscribeToMore }) => {
                 if (loading) return <p>Loading...</p>;
                 if (error) return <p>Error :(((</p>;
                 if (data.actInfo) return <div>Query: {data.actInfo[0].id},title: {data.actInfo[0].title}</div>;
                 return <p>資料庫連接失敗</p>
               }}
-            </Query></Row>
+            </Query></Col>
           </Container>
       )
     }

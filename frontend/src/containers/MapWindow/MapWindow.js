@@ -13,12 +13,12 @@ import OlStyleStroke from "ol/style/Stroke";
 import OlStyleFill from "ol/style/Fill";
 import OlStyleCircle from "ol/style/Circle";
 import OlSelect from "ol/interaction/Select.js";
-import { fromLonLat as OlFromLonLat, get as OlGet } from "ol/proj";
+import { fromLonLat as OlFromLonLat } from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
+import layerAct2 from "../../data_geo/act2.geojson";
 import layerAct from "../../data_geo/act.geojson";
-import layerBird from "../../data_geo/bird.geojson";
 
 import { connect } from "react-redux";
 import { showFeatureInfo } from "../../redux/actions/index";
@@ -36,18 +36,6 @@ class ConnectedPublicMap extends Component {
     this.state = { center: OlFromLonLat([120.5, 23.62]), zoom: 7 };
 
     this.styles = {
-      // activity: [
-      //   new OlStyleStyle({
-      //     image: new OlStyleIcon({
-      //       anchor: [4, 32],
-      //       anchorXUnits: "pixels",
-      //       anchorYUnits: "pixels",
-      //       opacity: 1.0,
-      //       crossOrigin: "anonymous",
-      //       src: imglocal
-      //     })
-      //   })
-      // ],
       metroline: [
         new OlStyleStyle({
           stroke: new OlStyleStroke({
@@ -57,7 +45,7 @@ class ConnectedPublicMap extends Component {
           })
         })
       ],
-      bird: new OlStyleStyle({
+      act: new OlStyleStyle({
         image: new OlStyleCircle({
           radius: 7,
           fill: new OlStyleFill({
@@ -115,22 +103,25 @@ class ConnectedPublicMap extends Component {
           })
         })
       },
-      activity: {
-        title: "展覽活動",
-        type: "overlay",
-        layer: new OlLayerVector({
-          visible: true,
-          source: this.loadJsonSourceWithAjax(layerAct)
-        })
-      },
-      bird: {
+      act2: {
         title: "bird",
         type: "overlay",
         layer: new OlLayerVector({
           visible: true,
           source: new OLSourceVector({
             format: new OlFormatGeoJson(),
-            url: layerBird
+            url: layerAct2
+          })
+        })
+      },
+      act: {
+        title: "bird",
+        type: "overlay",
+        layer: new OlLayerVector({
+          visible: true,
+          source: new OLSourceVector({
+            format: new OlFormatGeoJson(),
+            url: layerAct
           })
         })
       }
@@ -144,43 +135,6 @@ class ConnectedPublicMap extends Component {
         zoom: this.state.zoom
       })
     });
-  }
-
-  //! 迷之公式
-  loadJsonSourceWithAjax(url) {
-    var source = new OLSourceVector({});
-    fetch(url)
-      .then(res => res.json())
-      .then(
-        geojson => {
-          var options = {};
-          if (
-            typeof geojson.crs != "undefined" &&
-            typeof geojson.crs.properties != "undefined" &&
-            typeof geojson.crs.properties.name != "undefined"
-          ) {
-            options = {
-              dataProjection: OlGet("EPSG:4326"), //'EPSG:3826','EPSG:4326'
-              featureProjection: OlGet("EPSG:3857")
-            };
-          }
-          var features = new OlFormatGeoJson().readFeatures(geojson, options);
-          source.addFeatures(features);
-
-          console.log(features.length);
-          console.log(source);
-          return source;
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      );
   }
 
   setLayer(key) {
@@ -270,9 +224,9 @@ class ConnectedPublicMap extends Component {
       ) {
         // console.log(e.target.getFeatures())
         console.log(e.selected[0].values_);
-        const { LAT, LONG } = e.selected[0].values_;
-        showFeatureInfo([LAT, LONG]);
-        router2info("這邊放title")
+        const { _id, title,time,endTime,locationName,descriptionFilterHtml } = e.selected[0].values_;
+        showFeatureInfo([_id, title,time,endTime,locationName,descriptionFilterHtml]);
+        router2info(title)
       }
     });
   }

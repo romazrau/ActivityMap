@@ -12,12 +12,13 @@
     top: 56px;
     right: 0px;
     z-index: 60;
-    width: 25vw;
+    width: 33vw;
     height: calc(100vh - 86px);
     background-color: rgb(242, 243, 208);
     animation: slideopen 1s ;
     opacity:0.9;
     overflow-y: scroll;
+    overflow-x: visible;
 }
 
 .slidewindow:hover{
@@ -52,7 +53,7 @@
 .slideBtn{
     position: fixed; 
     top: 45vh;
-    right: 25vw;
+    right: 33vw;
     z-index: 55;
     background-color: rgb(91, 190, 124);
     height: 10vh;
