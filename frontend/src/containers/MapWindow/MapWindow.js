@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {withRouter} from 'react-router-dom'
+import { withRouter } from "react-router-dom";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import OlLayerTile from "ol/layer/Tile";
@@ -13,12 +13,10 @@ import OlStyleStroke from "ol/style/Stroke";
 import OlStyleFill from "ol/style/Fill";
 import OlStyleCircle from "ol/style/Circle";
 import OlSelect from "ol/interaction/Select.js";
-import { fromLonLat as OlFromLonLat } from "ol/proj";
+import { fromLonLat as OlFromLonLat, get as OlGet } from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
-import layerAct2 from "../../data_geo/act2.geojson";
-import layerAct from "../../data_geo/act.geojson";
 
 import { connect } from "react-redux";
 import { showFeatureInfo } from "../../redux/actions/index";
@@ -34,6 +32,80 @@ class ConnectedPublicMap extends Component {
     super(props);
 
     this.state = { center: OlFromLonLat([120.5, 23.62]), zoom: 7 };
+
+    //?   模擬GEO JSON資料進來
+    this.testlayer = {
+      type: "FeatureCollection",
+      name: "acttest4326",
+      crs: {
+        type: "name",
+        properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
+      },
+      features: [
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [121, 24]
+          },
+          properties: {
+            _id: "5d19c49120df1c32c4ddcfa0",
+            UID: "5d0a8886d083a335e0cb266e",
+            title: "Bookstart閱讀起步走主題書展",
+            category: "6",
+            descriptionFilterHtml: "展出適合0-5歲幼童閱讀繪本.",
+            time: "2019/07/02 08:30:00",
+            endTime: "2019/07/31 17:30:00",
+            location: "臺中市新社區社街四段1巷1號",
+            locationName: "臺中市立圖書館新社分館",
+            price: "",
+            onSales: "N"
+          }
+        },
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [121.637283, 24.637283]
+          },
+          properties: {
+            _id: "5d19c49120df1c32c4ddcfa1",
+            UID: "5d0a888ed083a335e0cb2672",
+            title: "林金昌雕刻創作展／曹天韻水墨畫創作展",
+            category: "6",
+            descriptionFilterHtml: "歡迎民眾參觀。",
+            time: "2019/07/01 08:30:00",
+            endTime: "2019/09/30 17:00:00",
+            location: "臺中市西屯區臺灣大道三段99號",
+            locationName: "臺中市政府新市政大樓",
+            price: "",
+            onSales: "N"
+          }
+        },
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [122, 24]
+          },
+          properties: {
+            _id: "5d19c49120df1c32c4ddcfa2",
+            UID: "5d0a888fd083a335e0cb267b",
+            title:
+              "【新北市立圖書館蘆洲仁愛智慧圖書館】108年7月　主題書展「「親子勤溝通，教養很輕鬆」",
+            category: "6",
+            descriptionFilterHtml:
+              "時間: 108年07月01日至108年07月31日\r\n「媽媽，我今天很傷心！」\r\n\r\n 「寶貝，你可以 說出來跟我分享嗎?」\r\n\r\n溝通是一條無形的電線，是心與心的連結，把心打開就會插上插座，能讓溝通暢行無阻。一個無所不談的 家庭，常能見到開懷的笑臉，爆笑溫馨的場面；若是溝通不良的家庭，再華麗的外表也只能見到垮哭的臉龐陰鬱的心。有歡笑有淚水的家庭自然養出有教養的小孩，我們來參考學者專家的經驗與建議，建立幸福家庭。\r\n\r\n◎活動單位保有取消、變更之權利，詳情請依現場為主。\r\n◎免費入場，無須報名，禁止飲食。\r\n\r\n交通： \r\n搭乘公車：仁愛廣場(水湳街) 【F331蘆洲社區巴士】 仁愛街口(民族路) 【211蘆洲-台北車站】【264捷運蘆洲站-板橋】【紅9蘆洲─捷運劍潭站】 【橘10泰山-捷運三民高中站】【橘17新莊中原路-捷 運三民高中站】 【橘20觀音山-蘆洲】 仁愛街口(仁愛街) 【F312蘆洲社區巴士】 仁愛國小(民族路) 【211蘆洲-台北車站】【264捷運 蘆洲站-板橋】【紅9蘆洲─捷運劍潭站】 【F312蘆洲社區巴士仁愛廣場(水湳街)【F331蘆洲社區巴士】 【橘16三重-捷運三民高中站】【橘17新莊中原路-捷運三民高中站】 搭乘捷運：捷運蘆洲站1號出口約10分鐘路程",
+            time: "2019/07/01 09:00:00",
+            endTime: "2019/07/31 21:00:00",
+            location: "新北市蘆洲區民權路143號",
+            locationName: "新北市立圖書館蘆洲仁愛智慧圖書館",
+            price: "",
+            onSales: "N"
+          }
+        }
+      ]
+    };
 
     this.styles = {
       metroline: [
@@ -103,28 +175,6 @@ class ConnectedPublicMap extends Component {
           })
         })
       },
-      act2: {
-        title: "bird",
-        type: "overlay",
-        layer: new OlLayerVector({
-          visible: true,
-          source: new OLSourceVector({
-            format: new OlFormatGeoJson(),
-            url: layerAct2
-          })
-        })
-      },
-      act: {
-        title: "bird",
-        type: "overlay",
-        layer: new OlLayerVector({
-          visible: true,
-          source: new OLSourceVector({
-            format: new OlFormatGeoJson(),
-            url: layerAct
-          })
-        })
-      }
     };
 
     this.olmap = new OlMap({
@@ -191,20 +241,58 @@ class ConnectedPublicMap extends Component {
     this.setState({ center: [13530000, 2883000], zoom: 11.5 });
   }
 
-  router2info=(e)=> {
+  router2info = e => {
     this.props.history.push(`/info/${e}`);
+  };
+
+  loadJsonSource2layer(geojson) {
+    var source = new OLSourceVector({});
+
+    console.log(geojson, "geojson");
+    var options = {};
+    if (
+      typeof geojson.crs != "undefined" &&
+      typeof geojson.crs.properties != "undefined" &&
+      typeof geojson.crs.properties.name != "undefined"
+    ) {
+      options = {
+        dataProjection: OlGet(geojson.crs.properties.name), //'EPSG:3826','EPSG:4326'
+        featureProjection: OlGet("EPSG:3857")
+      };
+    }
+    var features = new OlFormatGeoJson().readFeatures(geojson, options);
+    source.addFeatures(features);
+
+    // console.log(features.length);
+
+    return source;
   }
 
-  // source: new OLSourceVector({
-  //   features: (new OlFormatGeoJson()).readFeatures(layerAct, {     // 用readFeatures方法可以自定义坐标系
-  //     dataProjection: 'EPSG:4326',    // 设定JSON数据使用的坐标系
-  //     featureProjection: 'EPSG:3857' // 设定当前地图使用的feature的坐标系
-  // })
+
 
   componentDidMount() {
     this.initLayers();
     this.setLayer("OSM");
     this.olmap.setTarget("map");
+    //
+    //以下獲取資料後執行
+    this.olmap.addLayer(
+      new OlLayerVector({
+        source: this.loadJsonSource2layer(this.testlayer), //獲取資料放這裡
+        style: new OlStyleStyle({
+          image: new OlStyleCircle({
+            radius: 7,
+            fill: new OlStyleFill({
+              color: "#ff0000"
+            }),
+            stroke: new OlStyleStroke({
+              color: "rgba(255, 255, 255, 0.5)",
+              width: 2
+            })
+          })
+        })
+      })
+    );
 
     // Listen to map changes
     this.olmap.on("moveend", () => {
@@ -216,7 +304,7 @@ class ConnectedPublicMap extends Component {
     var select = new OlSelect();
     this.olmap.addInteraction(select);
     const showFeatureInfo = this.props.showFeatureInfo;
-    const router2info =this.router2info;
+    const router2info = this.router2info;
     select.on("select", function(e) {
       if (
         e.selected[0] !== undefined &&
@@ -224,9 +312,23 @@ class ConnectedPublicMap extends Component {
       ) {
         // console.log(e.target.getFeatures())
         console.log(e.selected[0].values_);
-        const { _id, title,time,endTime,locationName,descriptionFilterHtml } = e.selected[0].values_;
-        showFeatureInfo([_id, title,time,endTime,locationName,descriptionFilterHtml]);
-        router2info(title)
+        const {
+          _id,
+          title,
+          time,
+          endTime,
+          locationName,
+          descriptionFilterHtml
+        } = e.selected[0].values_;
+        showFeatureInfo([
+          _id,
+          title,
+          time,
+          endTime,
+          locationName,
+          descriptionFilterHtml
+        ]);
+        router2info(title);
       }
     });
   }
