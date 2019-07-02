@@ -2,7 +2,7 @@ import { IS_SLIDEWINDOW_SHOW,SLIDEWINDOW_TOGGLE,SHOW_FEATURE_INFO,USER_ID_UPDATA
 const initialState = {
   isSlidewindowShow: 1,
   selcetFeatureInfo: null,
-  userid: null
+  userid: ""
 };
 function rootReducer(state = initialState, action) {
 

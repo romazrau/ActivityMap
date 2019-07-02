@@ -1,14 +1,25 @@
 import React, { Component } from "react";
-import { Form, Col, Button, Container, Card, Image } from "react-bootstrap";
+import {
+  Form,
+  Col,
+  Button,
+  Container,
+  Card,
+  Image,
+  Row
+} from "react-bootstrap";
 
 import styles from "./Authenticate.module.css";
 
 import { connect } from "react-redux";
 import { userIDupdate } from "../../redux/actions/index";
 
+const mapStateToProps = state => {
+  return { userid: state.userid };
+};
 function mapDispatchToProps(dispatch) {
   return {
-    userIDupdate: (e) => dispatch(userIDupdate(e))
+    userIDupdate: e => dispatch(userIDupdate(e))
   };
 }
 class ConnectedAuthenticate extends Component {
@@ -83,8 +94,8 @@ class ConnectedAuthenticate extends Component {
     //   });
 
     //以下成功後的動作
-    this.props.userIDupdate(this.state.formID)
-    this.props.history.push("/info")
+    this.props.userIDupdate(this.state.formID);
+    this.props.history.push("/info");
 
     this.setState({
       formID: "",
@@ -104,8 +115,60 @@ class ConnectedAuthenticate extends Component {
       : this.setState({ isSingUp: 0 });
   };
 
+  signOut = () => {
+    //! 登出設定
+    
+    //
+    //
+    //
+    this.props.userIDupdate("");
+  };
+
+  cancelSignOut = () => {
+    this.props.history.push("/info");
+  };
+
   render() {
+    if (this.props.userid) {
+      //登出
+      return (
+        <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
+          <Container className={styles.base}>
+            <Image src={require("./OSM.png")} fluid className={styles.img} />
+            <Col lg="10" className={styles.card}>
+              <Card>
+                <Card.Body>
+                  <div>
+                    <Row style={{ justifyContent: "center" }}>
+                      <h4>確定要登出嗎?</h4>
+                    </Row>
+                    <Row style={{ justifyContent: "center" }}>
+                      <Button
+                        variant="info"
+                        type="submit"
+                        onClick={this.signOut}
+                      >
+                        登出
+                      </Button>
+                      &nbsp;
+                      <Button
+                        variant="secondary"
+                        type="submit"
+                        onClick={this.cancelSignOut}
+                      >
+                        取消
+                      </Button>
+                    </Row>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Container>
+        </div>
+      );
+    }
     if (this.state.isSingUp === 0) {
+      //登入
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
@@ -178,6 +241,7 @@ class ConnectedAuthenticate extends Component {
         </div>
       );
     } else {
+      //註冊
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
@@ -272,5 +336,8 @@ class ConnectedAuthenticate extends Component {
   }
 }
 
-const Authenticate = connect(null, mapDispatchToProps)(ConnectedAuthenticate);
+const Authenticate = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConnectedAuthenticate);
 export default Authenticate;

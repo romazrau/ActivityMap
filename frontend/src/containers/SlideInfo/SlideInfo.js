@@ -1,80 +1,86 @@
 import React, { Component } from "react";
-import { Container,Col} from "react-bootstrap";
-import { Query } from "react-apollo"; //, Mutation,Subscription
+import { Container, Col } from "react-bootstrap";
 
-import styles from "./SlideInfo.module.css"
+import styles from "./SlideInfo.module.css";
 import { connect } from "react-redux";
-import {
-    ACTINFO_INDIVIDUAL_QUERY,
-  } from "../../graphql";
-
 
 const mapStateToProps = state => {
-  return { selcetFeatureInfo: state.selcetFeatureInfo };
+  return { 
+    selcetFeatureInfo: state.selcetFeatureInfo,
+    userid: state.userid
+  };
 };
 class ConnectedSlideInfo extends Component {
+  constructor(props) {
+    super(props);
 
-    render() {
-      let display= null;
-        if(!this.props.selcetFeatureInfo){
-          display= <Col><h5>點擊地圖選取活動資訊</h5></Col>
-        }else{
-          display= (
-            <div>
-            <h4>{this.props.selcetFeatureInfo[1]}</h4>
-            <hr/>
-            <table>
-              <tbody>
-                <tr>
-                  <th className={styles.tabletitle}>
-                  活動地點:
-                  </th>
-                  <td>
-                  {this.props.selcetFeatureInfo[4]}
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                  開始時間:
-                  </th>
-                  <td>
-                  {this.props.selcetFeatureInfo[2]}
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                  結束時間:
-                  </th>
-                  <td>
-                  {this.props.selcetFeatureInfo[3]}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <hr/>
-            <div>{this.props.selcetFeatureInfo[5]}</div>
-            </div>
-          )
-        }
+    this.state = { likeNumber: 0};
+  }
 
-      return (
-          <Container style={{paddingTop:"2vh"}}>
-              {display}
-              <hr/>
-              <Col><Query query={ACTINFO_INDIVIDUAL_QUERY} variables={{ id: 10 }}>
-              {({ loading, error, data, subscribeToMore }) => {
-                if (loading) return <p>Loading...</p>;
-                if (error) return <p>Error :(((</p>;
-                if (data.actInfo) return <div>Query: {data.actInfo[0].id},title: {data.actInfo[0].title}</div>;
-                return <p>資料庫連接失敗</p>
-              }}
-            </Query></Col>
-          </Container>
-      )
+  likeplus=()=> {
+    if(!this.props.userid){
+      alert("您尚未登入喔")
+      return;
     }
+
+    if(!this.props.selcetFeatureInfo){
+      console.log("未獲取點資料")
+      return;
+    }
+
+    console.log(this.props.selcetFeatureInfo[0])  //文章ID
+    //後端互動放這裡
+    
+  }
+
+  componentDidMount() {
+    //跟資料庫互動獲取讚數
+    //更新this.state.likeNumber
+  }
+
+  render() {
+    let display = null;
+    if (!this.props.selcetFeatureInfo) {
+      display = (
+        <Col>
+          <h5>點擊地圖選取活動資訊</h5>
+        </Col>
+      );
+    } else {
+      display = (
+        <div>
+          <h4>{this.props.selcetFeatureInfo[1]}</h4>
+          <hr />
+          <table>
+            <tbody>
+              <tr>
+                <th className={styles.tabletitle}>活動地點:</th>
+                <td>{this.props.selcetFeatureInfo[4]}</td>
+              </tr>
+              <tr>
+                <th className={styles.tabletitle}>開始時間:</th>
+                <td>{this.props.selcetFeatureInfo[2]}</td>
+              </tr>
+              <tr>
+                <th className={styles.tabletitle}>結束時間:</th>
+                <td>{this.props.selcetFeatureInfo[3]}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          本活動獲得{this.state.likeNumber}個
+          <button className={styles.likeplus} onClick={this.likeplus}>
+            <i className="fa fa-heart" />
+          </button>
+          <hr />
+          <div>{this.props.selcetFeatureInfo[5]}</div>
+        </div>
+      );
+    }
+
+    return <Container style={{ paddingTop: "2vh" }}>{display}</Container>;
+  }
 }
 
-const SlideInfo = connect(
-  mapStateToProps
-)(ConnectedSlideInfo);
-export default  SlideInfo;
+const SlideInfo = connect(mapStateToProps)(ConnectedSlideInfo);
+export default SlideInfo;
