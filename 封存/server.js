@@ -155,5 +155,6 @@ const fetchData = () => {
             else {console.log('儲存成功')}
             //saved!
         })
+        Dataset.ensureIndex({UID:1}, {unique: true, dropDups: true})
     })
 }

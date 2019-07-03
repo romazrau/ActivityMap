@@ -100,8 +100,9 @@ class ConnectedApp extends Component {
             expand="lg"
             fixed="bottom"
             className={styles.bottom}
-          >
-            底部 - 開發中的地圖
+          ><span>
+             Developer:林承恩、周宇宸、饒孝天&nbsp;&nbsp;Data from : 行政院文化部開放資料、OSM、Google API、irasutoya
+             </span>
           </Navbar>
         </BrowserRouter>
       </div>

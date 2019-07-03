@@ -14,28 +14,33 @@ import OlStyleFill from "ol/style/Fill";
 import OlStyleCircle from "ol/style/Circle";
 import OlStyleIcon from "ol/style/Icon";
 import OlSelect from "ol/interaction/Select.js";
-import { fromLonLat as OlFromLonLat, get as OlGet ,transformExtent as olTransformExtent} from "ol/proj";
+import {
+  fromLonLat as OlFromLonLat,
+  get as OlGet,
+  transformExtent as olTransformExtent
+} from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
-import featureIcon from "../../img/animalface_suzume2.png"
+import featureIcon from "../../img/animalface_suzume2.png";
+import featureIconS from "../../img/animalface_suzume3.png";
 
 import { connect } from "react-redux";
 import { showFeatureInfo } from "../../redux/actions/index";
 
-import {GraphQLClient} from 'graphql-request'
-const dbURL = 'http://localhost:8787/api'
-const graphQLClient = new GraphQLClient(dbURL)
+import { GraphQLClient } from "graphql-request";
+const dbURL = "http://localhost:8787/api";
+const graphQLClient = new GraphQLClient(dbURL);
 const geoJsonQuery = `
   query($page: Int, $limit: Int) {
     geoJSON(page: $page, limit: $limit)
   }
-`
+`;
 const DataCountQuery = `
   query {
     totalGeoJson
   }
-`
+`;
 function mapDispatchToProps(dispatch) {
   return {
     showFeatureInfo: info => dispatch(showFeatureInfo(info))
@@ -166,7 +171,7 @@ class ConnectedPublicMap extends Component {
             url: layerMetroline
           })
         })
-      },
+      }
     };
 
     this.olmap = new OlMap({
@@ -177,13 +182,18 @@ class ConnectedPublicMap extends Component {
         zoom: this.state.zoom,
         maxZoom: 18,
         minZoom: 7,
-        extent: olTransformExtent([117, 21, 124, 25.3], 'EPSG:4326', 'EPSG:3857')
+        extent: olTransformExtent(
+          [117, 21, 124, 25.3],
+          "EPSG:4326",
+          "EPSG:3857"
+        )
       })
     });
   }
 
   setLayer(key) {
     //切換底圖層顯示
+    //按鈕style切換
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
       if (tlayer.type === "base") {
@@ -221,7 +231,7 @@ class ConnectedPublicMap extends Component {
     for (let i = 0; i < Object.keys(this.layers).length; i++) {
       var tlayer = this.layers[Object.keys(this.layers)[i]];
       if (tlayer.type === "overlay") {
-        tlayer.layer.setZIndex(10000 - i);
+        tlayer.layer.setZIndex(100 - i);
         tlayer.layer.setStyle(this.styles[Object.keys(this.layers)[i]]);
       }
     }
@@ -260,44 +270,48 @@ class ConnectedPublicMap extends Component {
   }
 
   fetchGeoData = async () => {
-    let dataCount = (await graphQLClient.request(DataCountQuery))["totalGeoJson"]
-    let page = 1
-    const limit = 100
-    while(dataCount > 0) {
-        const rawData = (await graphQLClient.request(geoJsonQuery, {page: page, limit: limit}))["geoJSON"]
-        const data = JSON.parse(rawData)
-        data.crs=  {
-          type: "name",
-          properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
-        }
-        this.olmap.addLayer(
-          new OlLayerVector({
-            source: this.loadJsonSource2layer(data), //獲取資料放這裡
-            style: new OlStyleStyle({
-              image: new OlStyleIcon(({
-                anchor: [0.5,0.5],
-                opacity: 1.00,
-                crossOrigin: 'anonymous',
-                src: featureIcon,
-                scale:0.1
-              }))
+    let dataCount = (await graphQLClient.request(DataCountQuery))[
+      "totalGeoJson"
+    ];
+    let page = 1;
+    const limit = 100;
+    while (dataCount > 0) {
+      const rawData = (await graphQLClient.request(geoJsonQuery, {
+        page: page,
+        limit: limit
+      }))["geoJSON"];
+      const data = JSON.parse(rawData);
+      data.crs = {
+        type: "name",
+        properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
+      };
+      this.olmap.addLayer(
+        new OlLayerVector({
+          source: this.loadJsonSource2layer(data), //獲取資料放這裡
+          zIndex: 100,
+          style: new OlStyleStyle({
+            image: new OlStyleIcon({
+              anchor: [0.5, 0.5],
+              opacity: 1.0,
+              crossOrigin: "anonymous",
+              src: featureIcon,
+              scale: 0.1
             })
           })
-        );
-        dataCount -= limit
-        page += 1
+        })
+      );
+      dataCount -= limit;
+      page += 1;
     }
-  }
-
-
+  };
 
   componentDidMount() {
     this.initLayers();
     this.setLayer("OSM");
     this.olmap.setTarget("map");
 
-    this.fetchGeoData()
-    
+    this.fetchGeoData();
+
     // Listen to map changes
     this.olmap.on("moveend", () => {
       let center = this.olmap.getView().getCenter();
@@ -310,12 +324,31 @@ class ConnectedPublicMap extends Component {
     const showFeatureInfo = this.props.showFeatureInfo;
     const router2info = this.router2info;
     select.on("select", function(e) {
+      var selected = e.selected; //選取圖徵style
+      var deselected = e.deselected;
+      selected.forEach(function(feature) {
+        feature.setStyle(
+          new OlStyleStyle({
+            image: new OlStyleIcon({
+              anchor: [0.5, 0.5],
+              opacity: 1.0,
+              crossOrigin: "anonymous",
+              src: featureIconS,
+              scale: 0.1
+            })
+          })
+        );
+      });
+      deselected.forEach(function(feature) {
+        feature.setStyle(null);
+      });
+
       if (
         e.selected[0] !== undefined &&
         e.selected[0].values_.geometry.getType() === "Point"
       ) {
         // console.log(e.target.getFeatures())
-        // console.log(e.selected[0].values_);
+        console.log(e.selected[0].values_);
         const {
           _id,
           title,
@@ -367,7 +400,7 @@ class ConnectedPublicMap extends Component {
             id="GoogleMapsBtn"
             style={{ borderRadius: "0 0px 0px 0" }}
           >
-            估狗街道圖
+            Google街道圖
           </button>
           <button
             onClick={e => this.setLayer("GoogleMapsS")}
@@ -375,7 +408,7 @@ class ConnectedPublicMap extends Component {
             id="GoogleMapsSBtn"
             style={{ borderRadius: "0 4px 4px 0" }}
           >
-            估狗衛星影像
+            Google衛星影像
           </button>
           &nbsp;
           <button

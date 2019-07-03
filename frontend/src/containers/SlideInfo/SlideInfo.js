@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { Container, Col } from "react-bootstrap";
+import { Container, Image, Col } from "react-bootstrap";
 
 import styles from "./SlideInfo.module.css";
 import { connect } from "react-redux";
 
 const mapStateToProps = state => {
-  return { 
+  return {
     selcetFeatureInfo: state.selcetFeatureInfo,
     userid: state.userid,
     token: state.token
@@ -15,25 +15,24 @@ class ConnectedSlideInfo extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { likeNumber: 0};
+    this.state = { likeNumber: 0 };
   }
 
-  likeplus=()=> {
-    if(!this.props.userid){
-      alert("您尚未登入喔")
+  likeplus = () => {
+    if (!this.props.userid) {
+      alert("您尚未登入喔");
       return;
     }
 
-    if(!this.props.selcetFeatureInfo){
-      console.log("未獲取點資料")
+    if (!this.props.selcetFeatureInfo) {
+      console.log("未獲取點資料");
       return;
     }
 
-    console.log(this.props.selcetFeatureInfo[0])  //文章ID
-    console.log(this.props.token)  
+    console.log(this.props.selcetFeatureInfo[0]); //文章ID
+    console.log(this.props.token);
     //後端互動放這裡
-    
-  }
+  };
 
   componentDidMount() {
     //跟資料庫互動獲取讚數
@@ -44,8 +43,9 @@ class ConnectedSlideInfo extends Component {
     let display = null;
     if (!this.props.selcetFeatureInfo) {
       display = (
-        <Col>
-          <h5>點擊地圖選取活動資訊</h5>
+        <Col style={{ paddingTop: "10vh" }}>
+          <Image src={require("../../img/bukkyou_sottakudouji.png")} fluid />
+          <h5>點擊圖徵選取活動資訊</h5>
         </Col>
       );
     } else {
@@ -75,7 +75,7 @@ class ConnectedSlideInfo extends Component {
             <i className="fa fa-heart" />
           </button>
           <hr />
-          <div>{this.props.selcetFeatureInfo[5]}</div>
+          <div>{this.props.selcetFeatureInfo[5].split('&nbsp;')}</div>
         </div>
       );
     }
