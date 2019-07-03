@@ -9,7 +9,8 @@
 
 ### 3. 安裝/使用/操作方式
 ```
-cd backend && npm run def
+cd backend && npm install && node server.js 
+cd ../
 cd frontend && npm install && npm start
 ```
 
@@ -33,7 +34,7 @@ cd frontend && npm install && npm start
 
 ## 5.Github and demo連結:
 * github link:
-* https://github.com/romazrau/ActivityMap?fbclid=IwAR2RPFsBpQa1pfw8nAXY_JvRHCQJ0dg5W_o_JnEoYVsqtZB1IkymcsYMoNw
+* https://github.com/romazrau/ActivityMap.git
 * demo video link:
 *
 
@@ -44,9 +45,11 @@ cd frontend && npm install && npm start
 
 
 ## 7.專題製作心得與建議
-* 林承恩
+* 周宇辰
+
+* 林承恩:
 透過這次完整的專案，從頭開始了解前端到後端整個協作的過程，也在學期末開始一連串的查資料與DEBUG地獄，也認知到自己撰寫程式能力的不足。在專案中也發現到前後端的溝通真的很重要，在WEB的整個架構中，若只了解其中一端，在前後端的溝通連接上會出很大的問題，專案的完成更有賴於前後端工程師的持續溝通。感謝RIC開了這門課，讓我得以一窺WEB程式，以及業界目前的趨勢。
 
-* 饒孝天
+* 饒孝天:在努力debug、修修改改、重新選擇套件、取捨中，體會專案開體發的各種困擾。隨然開發前端大致上還算順利，但在跟後端串接與使用openlayers套件時，因不夠熟悉而進度有所停滯，不過好在還是順利解決了。建議本課程能夠在前後端協定多一點時作教學。在課程學到完整的網站開發，相信未來有很多運用與增進的空間。
 
-* 周宇辰
+
