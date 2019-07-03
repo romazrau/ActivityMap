@@ -43,8 +43,7 @@ class ConnectedHeaderNavBar extends React.Component {
           <Nav className="mr-auto">
               <NavLink to="/" activeStyle={{ color: "#fa923f" }} exact className={styles.navlink} onClick={this.chickSlidewindowOpen}>網站介紹</NavLink>
               <NavLink to="/info" activeStyle={{ color: "#fa923f" }} className={styles.navlink} onClick={this.chickSlidewindowOpen}>查看活動</NavLink>
-              <NavLink to="/xv18" activeStyle={{ color: "#fa923f" }} className={styles.navlink} onClick={this.chickSlidewindowOpen}>未開放功能</NavLink>
-            {/* <Nav.Link href="#link">#跟/的差別?</Nav.Link> */}
+              {/* <NavLink to="/xv18" activeStyle={{ color: "#fa923f" }} className={styles.navlink} onClick={this.chickSlidewindowOpen}>未開放功能</NavLink> */}
             {/* <NavDropdown title="更多的切換" id="basic-nav-dropdown" >
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">

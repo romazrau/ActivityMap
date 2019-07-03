@@ -12,11 +12,13 @@ import OlStyleStyle from "ol/style/Style";
 import OlStyleStroke from "ol/style/Stroke";
 import OlStyleFill from "ol/style/Fill";
 import OlStyleCircle from "ol/style/Circle";
+import OlStyleIcon from "ol/style/Icon";
 import OlSelect from "ol/interaction/Select.js";
 import { fromLonLat as OlFromLonLat, get as OlGet } from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
+import featureIcon from "../../img/animalface_suzume2.png"
 
 import { connect } from "react-redux";
 import { showFeatureInfo } from "../../redux/actions/index";
@@ -182,7 +184,9 @@ class ConnectedPublicMap extends Component {
       layers: Object.keys(this.layers).map(e => this.layers[e].layer),
       view: new OlView({
         center: this.state.center,
-        zoom: this.state.zoom
+        zoom: this.state.zoom,
+        maxZoom: 18,
+        minZoom: 7,
       })
     });
   }
@@ -247,8 +251,6 @@ class ConnectedPublicMap extends Component {
 
   loadJsonSource2layer(geojson) {
     var source = new OLSourceVector({});
-
-    console.log(geojson, "geojson");
     var options = {};
     if (
       typeof geojson.crs != "undefined" &&
@@ -262,8 +264,6 @@ class ConnectedPublicMap extends Component {
     }
     var features = new OlFormatGeoJson().readFeatures(geojson, options);
     source.addFeatures(features);
-
-    // console.log(features.length);
 
     return source;
   }
@@ -280,16 +280,13 @@ class ConnectedPublicMap extends Component {
       new OlLayerVector({
         source: this.loadJsonSource2layer(this.testlayer), //獲取資料放這裡
         style: new OlStyleStyle({
-          image: new OlStyleCircle({
-            radius: 7,
-            fill: new OlStyleFill({
-              color: "#ff0000"
-            }),
-            stroke: new OlStyleStroke({
-              color: "rgba(255, 255, 255, 0.5)",
-              width: 2
-            })
-          })
+          image: new OlStyleIcon(({
+            anchor: [0.5,0.5],
+            opacity: 1.00,
+            crossOrigin: 'anonymous',
+            src: featureIcon,
+            scale:0.1
+          }))
         })
       })
     );

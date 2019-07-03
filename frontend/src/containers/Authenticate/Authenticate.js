@@ -134,7 +134,7 @@ class ConnectedAuthenticate extends Component {
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
-            <Image src={require("./OSM.png")} fluid className={styles.img} />
+            <Image src={require("../../img/OSM.png")} fluid className={styles.img} />
             <Col lg="10" className={styles.card}>
               <Card>
                 <Card.Body>
@@ -172,7 +172,7 @@ class ConnectedAuthenticate extends Component {
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
-            <Image src={require("./OSM.png")} fluid className={styles.img} />
+            <Image src={require("../../img/OSM.png")} fluid className={styles.img} />
             <Col lg="10" className={styles.card}>
               <Card>
                 <Card.Header as="h5">使用者登入</Card.Header>
@@ -245,7 +245,7 @@ class ConnectedAuthenticate extends Component {
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
-            <Image src={require("./OSM.png")} fluid className={styles.img} />
+            <Image src={require("../../img/OSM.png")} fluid className={styles.img} />
             <Col lg="10" className={styles.card}>
               <Card>
                 <Card.Header as="h5">註冊帳號</Card.Header>
