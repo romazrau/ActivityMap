@@ -1,8 +1,9 @@
-import { IS_SLIDEWINDOW_SHOW,SLIDEWINDOW_TOGGLE,SHOW_FEATURE_INFO,USER_ID_UPDATA  } from "../constants/action-types";
+import { IS_SLIDEWINDOW_SHOW,SLIDEWINDOW_TOGGLE,SHOW_FEATURE_INFO,USER_ID_UPDATA,TOKEN_UPDATA  } from "../constants/action-types";
 const initialState = {
   isSlidewindowShow: 1,
   selcetFeatureInfo: null,
-  userid: ""
+  userid: "",
+  token: ""
 };
 function rootReducer(state = initialState, action) {
 
@@ -24,6 +25,11 @@ function rootReducer(state = initialState, action) {
   if (action.type === USER_ID_UPDATA){
     console.log("USER_ID_UPDATA(reducers)")
     return Object.assign({}, state, {userid: action.payload});
+  }
+
+  if (action.type === TOKEN_UPDATA){
+    console.log("TOKEN_UPDATA(reducers)")
+    return Object.assign({}, state, {token: action.payload});
   }
 
   return state;

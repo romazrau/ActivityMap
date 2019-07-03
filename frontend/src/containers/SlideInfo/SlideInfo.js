@@ -7,7 +7,8 @@ import { connect } from "react-redux";
 const mapStateToProps = state => {
   return { 
     selcetFeatureInfo: state.selcetFeatureInfo,
-    userid: state.userid
+    userid: state.userid,
+    token: state.token
   };
 };
 class ConnectedSlideInfo extends Component {
@@ -29,6 +30,7 @@ class ConnectedSlideInfo extends Component {
     }
 
     console.log(this.props.selcetFeatureInfo[0])  //文章ID
+    console.log(this.props.token)  
     //後端互動放這裡
     
   }

@@ -27,8 +27,8 @@ const conditions = [
         UID: 1,
         category: 1,
         title: 1,
-        'latitude': '$showInfo.latitude',
-        'longitude':'$showInfo.longitude',
+        'latitude': {$ifNull: ['$showInfo.latitude', '0']},
+        'longitude':{$ifNull: ['$showInfo.longitude', '0']},
         'time': '$showInfo.time',
         'endTime': '$showInfo.endTime',
         'location': '$showInfo.location',
@@ -38,8 +38,6 @@ const conditions = [
         descriptionFilterHtml: 1
     }}
 ]
-
-var _data = undefined
 
 const userModel = mongoose.model('User',new mongoose.Schema({
     id: String, 
@@ -65,12 +63,12 @@ const postModel = mongoose.model('Post', new mongoose.Schema({
 app.use(cors())
 app.use(bodyParser.json())
 app.use(authMiddleware)
-app.use('/api', graphqlHTTP((req) => {
+app.use('/api', graphqlHTTP((req, res) => {
     return {
         schema: userSchema,
         rootValue: resolver,
         graphiql: true,
-        context: {user: req.user}
+        context: {user: req.user, response:res}
     }
 }))
 
@@ -140,7 +138,7 @@ const resolver = {
 
     geoJSON: async ({page, limit}) => {
         const raw_data = await Dataset.aggregatePaginate(Dataset.aggregate(conditions), {page: page, limit: limit})
-        const data = GeoJSON.parse(raw_data, {Point: ['latitude', 'longtitude']})
+        const data = GeoJSON.parse(raw_data.data, {Point: ['latitude', 'longitude']})
         return JSON.stringify(data, undefined, 2)
     }
 }

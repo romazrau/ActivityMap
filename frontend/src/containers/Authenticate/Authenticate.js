@@ -8,32 +8,35 @@ import {
   Image,
   Row
 } from "react-bootstrap";
-import {GraphQLClient} from 'graphql-request'
+import { GraphQLClient } from "graphql-request";
 import styles from "./Authenticate.module.css";
 import { connect } from "react-redux";
-import { userIDupdate } from "../../redux/actions/index";
+import { userIDupdata, tokenUpdata } from "../../redux/actions/index";
 
-var token = ''
-const serverURL = 'http://localhost:8787/api'
-const client = new GraphQLClient(serverURL, {headers: {Authorization: token, 
-'Content-Type': 'application/json'}, mode: 'cors'})
-const loginQuery =   `
+var token = "";
+const serverURL = "http://localhost:8787/api";
+const client = new GraphQLClient(serverURL, {
+  headers: { Authorization: token, "Content-Type": "application/json" },
+  mode: "cors"
+});
+const loginQuery = `
     query ($id: String!, $pw: String!) {
       login(id: $id, pw: $pw) 
     }
-  `
+  `;
 const createUserQuery = `
     mutation ($id: String!, $pw: String!) {
         createUser(id: $id, pw: $pw)
     }
-`
+`;
 
 const mapStateToProps = state => {
   return { userid: state.userid };
 };
 function mapDispatchToProps(dispatch) {
   return {
-    userIDupdate: e => dispatch(userIDupdate(e))
+    userIDupdata: e => dispatch(userIDupdata(e)),
+    tokenUpdata: e => dispatch(tokenUpdata(e))
   };
 }
 class ConnectedAuthenticate extends Component {
@@ -91,40 +94,61 @@ class ConnectedAuthenticate extends Component {
       }
     }
 
-    if(this.state.isSingUp === 0 ) {
-      client.request(loginQuery, {id: this.state.formID, pw: this.state.formPassword}).then(result => {
-        token = result.login
-        if(!token){
-          this.setState({
-            alerttext: "帳號或密碼錯誤",
-            formPassword: "",
-            formPasswordcheck: ""
-          });
-        }else {
-          this.props.userIDupdate(this.state.formID);
-          this.setState({
-            formID: "",
-            formPassword: "",
-            formPasswordcheck: "",
-            alerttext: ""
-          });
-          this.props.history.push("/info"); 
-        }
-      })
-    }else {
-      client.request(createUserQuery, {id: this.state.formID, pw: this.state.formPassword}).then(result => {
-        token = result
-        this.props.userIDupdate(this.state.formID);
-        this.setState({
-          formID: "",
-          formPassword: "",
-          formPasswordcheck: "",
-          alerttext: ""
+    if (this.state.isSingUp === 0) {
+      client
+        .request(loginQuery, {
+          id: this.state.formID,
+          pw: this.state.formPassword
+        })
+        .then(result => {
+          token = result.login;
+          if (!token) {
+            this.setState({
+              alerttext: "帳號或密碼錯誤",
+              formPassword: "",
+              formPasswordcheck: ""
+            });
+          } else {
+            this.props.userIDupdata(this.state.formID);
+            this.props.tokenUpdata(token);
+            this.setState({
+              formID: "",
+              formPassword: "",
+              formPasswordcheck: "",
+              alerttext: ""
+            });
+            this.props.history.push("/info");
+          }
         });
-        this.props.history.push("/info")
-      })
+    } else {
+      client
+        .request(createUserQuery, {
+          id: this.state.formID,
+          pw: this.state.formPassword
+        })
+        .then(result => {
+          token = result.createUser;
+          console.log(token)
+          if (!token) {
+            this.setState({
+              alerttext: "帳號重複囉",
+              formID: "",
+              formPassword: "",
+              formPasswordcheck: ""
+            });
+          } else {
+            this.props.userIDupdata(this.state.formID);
+            this.props.tokenUpdata(token);
+            this.setState({
+              formID: "",
+              formPassword: "",
+              formPasswordcheck: "",
+              alerttext: ""
+            });
+            this.props.history.push("/info");
+          }
+        });
     }
-
   };
 
   toggleSingup = () => {
@@ -140,8 +164,8 @@ class ConnectedAuthenticate extends Component {
 
   signOut = () => {
     //! 登出設定
-    this.props.userIDupdate("");
-    window.location.reload(true)
+    this.props.userIDupdata("");
+    window.location.reload(true);
   };
 
   cancelSignOut = () => {
@@ -154,7 +178,11 @@ class ConnectedAuthenticate extends Component {
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
-            <Image src={require("../../img/OSM.png")} fluid className={styles.img} />
+            <Image
+              src={require("../../img/OSM.png")}
+              fluid
+              className={styles.img}
+            />
             <Col lg="10" className={styles.card}>
               <Card>
                 <Card.Body>
@@ -192,7 +220,11 @@ class ConnectedAuthenticate extends Component {
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
-            <Image src={require("../../img/OSM.png")} fluid className={styles.img} />
+            <Image
+              src={require("../../img/OSM.png")}
+              fluid
+              className={styles.img}
+            />
             <Col lg="10" className={styles.card}>
               <Card>
                 <Card.Header as="h5">使用者登入</Card.Header>
@@ -265,7 +297,11 @@ class ConnectedAuthenticate extends Component {
       return (
         <div style={{ backgroundColor: "rgb(170, 211, 223)" }}>
           <Container className={styles.base}>
-            <Image src={require("../../img/OSM.png")} fluid className={styles.img} />
+            <Image
+              src={require("../../img/OSM.png")}
+              fluid
+              className={styles.img}
+            />
             <Col lg="10" className={styles.card}>
               <Card>
                 <Card.Header as="h5">註冊帳號</Card.Header>
