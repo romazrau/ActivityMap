@@ -165,6 +165,7 @@ class ConnectedAuthenticate extends Component {
   signOut = () => {
     //! 登出設定
     this.props.userIDupdata("");
+    this.props.tokenUpdata("");
     window.location.reload(true);
   };
 
