@@ -8,11 +8,25 @@ import {
   Image,
   Row
 } from "react-bootstrap";
-
+import {GraphQLClient} from 'graphql-request'
 import styles from "./Authenticate.module.css";
-
 import { connect } from "react-redux";
 import { userIDupdate } from "../../redux/actions/index";
+
+var token = ''
+const serverURL = 'http://localhost:8787/api'
+const client = new GraphQLClient(serverURL, {headers: {Authorization: token, 
+'Content-Type': 'application/json'}, mode: 'cors'})
+const loginQuery =   `
+    query ($id: String!, $pw: String!) {
+      login(id: $id, pw: $pw) 
+    }
+  `
+const createUserQuery = `
+    mutation ($id: String!, $pw: String!) {
+        createUser(id: $id, pw: $pw)
+    }
+`
 
 const mapStateToProps = state => {
   return { userid: state.userid };
@@ -34,13 +48,8 @@ class ConnectedAuthenticate extends Component {
     };
   }
 
-  handleFormSubmit = e => {
+  handleFormSubmit = async e => {
     e.preventDefault();
-    console.log(
-      this.state.formID,
-      this.state.formPassword,
-      this.state.formPasswordcheck
-    );
     if (this.state.formID === "") {
       this.setState({
         alerttext: "請輸入帳號",
@@ -82,33 +91,47 @@ class ConnectedAuthenticate extends Component {
       }
     }
 
-    //   const { formUser,formTitle, formBody } = this.state;
-    //   if (!formTitle || !formBody) return;
-    //   this.createPost({
-    //     variables: {
-    //       title: formTitle,
-    //       body: formBody,
-    //       published: true,
-    //       authorId: Number(formUser)
-    //     }
-    //   });
+    if(this.state.isSingUp === 0 ) {
+      client.request(loginQuery, {id: this.state.formID, pw: this.state.formPassword}).then(result => {
+        token = result.login
+        if(!token){
+          this.setState({
+            alerttext: "帳號或密碼錯誤",
+            formPassword: "",
+            formPasswordcheck: ""
+          });
+        }else {
+          this.props.userIDupdate(this.state.formID);
+          this.setState({
+            formID: "",
+            formPassword: "",
+            formPasswordcheck: "",
+            alerttext: ""
+          });
+          this.props.history.push("/info"); 
+        }
+      })
+    }else {
+      client.request(createUserQuery, {id: this.state.formID, pw: this.state.formPassword}).then(result => {
+        token = result
+        this.props.userIDupdate(this.state.formID);
+        this.setState({
+          formID: "",
+          formPassword: "",
+          formPasswordcheck: "",
+          alerttext: ""
+        });
+        this.props.history.push("/info")
+      })
+    }
 
-    //以下成功後的動作
-    this.props.userIDupdate(this.state.formID);
-    this.props.history.push("/info");
-
-    this.setState({
-      formID: "",
-      formPassword: "",
-      formPasswordcheck: "",
-      alerttext: ""
-    });
   };
 
   toggleSingup = () => {
     this.setState({
       formPassword: "",
-      formPasswordcheck: ""
+      formPasswordcheck: "",
+      alerttext: ""
     });
     this.state.isSingUp === 0
       ? this.setState({ isSingUp: 1 })
@@ -117,11 +140,8 @@ class ConnectedAuthenticate extends Component {
 
   signOut = () => {
     //! 登出設定
-    
-    //
-    //
-    //
     this.props.userIDupdate("");
+    window.location.reload(true)
   };
 
   cancelSignOut = () => {

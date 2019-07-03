@@ -11,7 +11,7 @@ class Home extends Component {
               <Row><p>
                   &nbsp;&nbsp;&nbsp;&nbsp;活動通地圖
                   </p></Row>
-              <Row><p>可可</p></Row>
+              <Row><p></p></Row>
               </Col>
           </Container>
       )

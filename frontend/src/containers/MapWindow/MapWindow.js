@@ -14,7 +14,7 @@ import OlStyleFill from "ol/style/Fill";
 import OlStyleCircle from "ol/style/Circle";
 import OlStyleIcon from "ol/style/Icon";
 import OlSelect from "ol/interaction/Select.js";
-import { fromLonLat as OlFromLonLat, get as OlGet } from "ol/proj";
+import { fromLonLat as OlFromLonLat, get as OlGet ,transformExtent as olTransformExtent} from "ol/proj";
 
 import styles from "./MapWindow.module.css";
 import layerMetroline from "../../data_geo/metroline.geojson";
@@ -187,6 +187,7 @@ class ConnectedPublicMap extends Component {
         zoom: this.state.zoom,
         maxZoom: 18,
         minZoom: 7,
+        extent: olTransformExtent([117, 21, 124, 25.3], 'EPSG:4326', 'EPSG:3857')
       })
     });
   }
