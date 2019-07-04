@@ -101,7 +101,7 @@ class ConnectedApp extends Component {
             fixed="bottom"
             className={styles.bottom}
           ><span>
-             Developer:林承恩、周宇宸、饒孝天&nbsp;&nbsp;Data from : 行政院文化部開放資料、OSM、Google API、irasutoya
+             Developer:林承恩、周宇宸、饒孝天&nbsp;&nbsp;Data from : 行政院文化部開放資料、OSM、Google API &nbsp;&nbsp;圖片來源:irasutoya
              </span>
           </Navbar>
         </BrowserRouter>

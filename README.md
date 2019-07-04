@@ -16,7 +16,7 @@ cd frontend && npm install && npm start
 
 ## 4.使用與參考之框架/模組/原始碼/第三方套件
 * 框架 =>
-* 前端:react、react router。
+* 前端:react、react router、react-bootstrap。
 * 後端:express、mongoose。
 * 資料庫:mongoDB。
 
@@ -30,6 +30,7 @@ cd frontend && npm install && npm start
 * 使用者驗證jsonwebtoken
 * url內資料下載:request
 * 地理資料轉換:geojason
+* Icon:Font Awesome Icons
 
 
 ## 5.Github and demo連結:
