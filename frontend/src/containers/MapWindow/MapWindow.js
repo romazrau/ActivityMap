@@ -325,6 +325,7 @@ class ConnectedPublicMap extends Component {
     var select = new OlSelect();
     this.olmap.addInteraction(select);
     const showFeatureInfo = this.props.showFeatureInfo;
+    const historyPush =  this.props.history.push;
     select.on("select", function(e) {
       var selected = e.selected; //選取圖徵style
       var deselected = e.deselected;
@@ -372,7 +373,7 @@ class ConnectedPublicMap extends Component {
             descriptionFilterHtml,
             count.likesCount
           ]);
-
+          historyPush("/info");
         }
         asyncShowFeatureInfo();
 
