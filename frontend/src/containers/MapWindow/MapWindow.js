@@ -41,6 +41,12 @@ const DataCountQuery = `
     totalGeoJson
   }
 `;
+const likesCountQuery = `
+  query($postID: String!) {
+    likesCount(postID: $postID)
+  }
+`
+
 function mapDispatchToProps(dispatch) {
   return {
     showFeatureInfo: info => dispatch(showFeatureInfo(info))
@@ -246,10 +252,6 @@ class ConnectedPublicMap extends Component {
     this.setState({ center: [13530000, 2883000], zoom: 11.5 });
   }
 
-  router2info = e => {
-    this.props.history.push(`/info/${e}`);
-  };
-
   loadJsonSource2layer(geojson) {
     var source = new OLSourceVector({});
     var options = {};
@@ -306,6 +308,7 @@ class ConnectedPublicMap extends Component {
   };
 
   componentDidMount() {
+    this.props.showFeatureInfo(null)
     this.initLayers();
     this.setLayer("OSM");
     this.olmap.setTarget("map");
@@ -322,7 +325,6 @@ class ConnectedPublicMap extends Component {
     var select = new OlSelect();
     this.olmap.addInteraction(select);
     const showFeatureInfo = this.props.showFeatureInfo;
-    const router2info = this.router2info;
     select.on("select", function(e) {
       var selected = e.selected; //選取圖徵style
       var deselected = e.deselected;
@@ -348,24 +350,34 @@ class ConnectedPublicMap extends Component {
         e.selected[0].values_.geometry.getType() === "Point"
       ) {
         // console.log(e.target.getFeatures())
-        console.log(e.selected[0].values_);
-        const {
-          _id,
-          title,
-          time,
-          endTime,
-          locationName,
-          descriptionFilterHtml
-        } = e.selected[0].values_;
-        showFeatureInfo([
-          _id,
-          title,
-          time,
-          endTime,
-          locationName,
-          descriptionFilterHtml
-        ]);
-        router2info(title);
+        // console.log(e.selected[0].values_);
+        const asyncShowFeatureInfo = async () => {
+          const {
+            _id,
+            title,
+            time,
+            endTime,
+            locationName,
+            descriptionFilterHtml
+          } = e.selected[0].values_;
+
+          const client = new GraphQLClient(dbURL)
+          const count = await client.request(likesCountQuery, {postID: _id})
+          showFeatureInfo([
+            _id,
+            title,
+            time,
+            endTime,
+            locationName,
+            descriptionFilterHtml,
+            count.likesCount
+          ]);
+
+        }
+        asyncShowFeatureInfo();
+
+      }else{
+        showFeatureInfo(null)
       }
     });
   }

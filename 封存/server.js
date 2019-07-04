@@ -52,6 +52,7 @@ const commentModel = mongoose.model('Comment',new mongoose.Schema({
 }))
 
 const postModel = mongoose.model('Post', new mongoose.Schema({
+    postID: String,
     title: String, 
     author: String, 
     body: String, 
@@ -62,13 +63,22 @@ const postModel = mongoose.model('Post', new mongoose.Schema({
 
 app.use(cors())
 app.use(bodyParser.json())
-app.use(authMiddleware)
-app.use('/api', graphqlHTTP((req, res) => {
+//app.use(authMiddleware)
+app.use('/api', async (req, res, next) =>  {
+    let token = req.header('Authorization')
+    if(token === '' || token === undefined)  {}
+    else {
+        let result = jwt.verify(token.replace("Bearer ", ''), SECRET)
+        req.user = result.id
+    }
+    next()
+})
+app.use('/api', graphqlHTTP((req) => {
     return {
         schema: userSchema,
         rootValue: resolver,
         graphiql: true,
-        context: {user: req.user, response:res}
+        context: {user: req.user}
     }
 }))
 
@@ -100,27 +110,40 @@ const resolver = {
         return true
     },
 
-    likePost: async ({postID, liker}) => {
-        const post = await postModel.findOne({postID: postID})
-        const likerIndex = post.likers.indexOf(liker)
-        if(likerIndex === -1) {
+    likesCount: async ({postID}) => {
+        let post = await postModel.findOne({postID: postID})
+        if(!post) post = await postModel.create({postID: postID, likes: 0, likers: []})
+        return post.likes
+    },
+
+    likePost: async ({postID, liker}, context) => {
+        let post = await postModel.findOne({postID: postID})
+
+        if(post.likes === 0) {
             post.likers.push(liker)
             post.likes += 1
         }
         else {
-            post.likers = post.likers.splice(likerIndex, 1)
-            post.likes -= 1
+            const likerIndex = post.likers.indexOf(liker)
+            console.log(`index = ${likerIndex}`)
+            if(likerIndex === -1) {
+                post.likers.push(liker)
+                post.likes += 1
+            }
+            else {
+                post.likers.splice(likerIndex, 1)
+                post.likes -= 1
+            }
         }
-        post.save()
+        await post.save()
         return post.likes
     },
 
-    login: async ({id, pw}, req) => {
+    login: async ({id, pw}, context) => {
         const user = await userModel.findOne({id: id})
         if(!user) return ''
         if(await bcrypt.compare(pw, user.pw)) {
             const token = createToken(id, pw, SECRET)
-            console.log('ok')
             return token
         } 
         else return ''

@@ -23,6 +23,7 @@ const schema = buildSchema(`
         comments(postID: String!): [Comment]
         totalGeoJson: Int
         geoJSON(page: Int, limit: Int): String
+        likesCount(postID: String!): Int
     }
 `)
 module.exports = schema

@@ -3,41 +3,58 @@ import { Container, Image, Col } from "react-bootstrap";
 
 import styles from "./SlideInfo.module.css";
 import { connect } from "react-redux";
+import { showFeatureInfo } from "../../redux/actions/index";
+import {GraphQLClient} from 'graphql-request'
+
+const dbURL = 'http://localhost:8787/api'
+const likeQuery = `
+  mutation($postID: String!, $liker: String!) {
+      likePost(postID: $postID, liker: $liker)
+  }
+`
 
 const mapStateToProps = state => {
-  return {
+  return { 
     selcetFeatureInfo: state.selcetFeatureInfo,
     userid: state.userid,
     token: state.token
   };
 };
+function mapDispatchToProps(dispatch) {
+  return {
+    showFeatureInfo: info => dispatch(showFeatureInfo(info))
+  };
+}
 class ConnectedSlideInfo extends Component {
+
   constructor(props) {
     super(props);
 
-    this.state = { likeNumber: 0 };
+    this.state = { likeChange: 0 };
   }
 
-  likeplus = () => {
-    if (!this.props.userid) {
-      alert("您尚未登入喔");
+  likeplus= async () => {
+    const client = new GraphQLClient(dbURL, {headers:{Authorization: this.props.token}})
+    if(!this.props.userid){
+      alert("您尚未登入喔")
       return;
     }
 
-    if (!this.props.selcetFeatureInfo) {
-      console.log("未獲取點資料");
+    if(!this.props.selcetFeatureInfo){
+      console.log("未獲取點資料")
       return;
     }
 
-    console.log(this.props.selcetFeatureInfo[0]); //文章ID
-    console.log(this.props.token);
-    //後端互動放這裡
-  };
-
-  componentDidMount() {
-    //跟資料庫互動獲取讚數
-    //更新this.state.likeNumber
+    const likes = await client.request(likeQuery, {postID: this.props.selcetFeatureInfo[0], liker: this.props.userid})
+    if(this.props.selcetFeatureInfo[6] > likes.likePost){
+      alert("您已取消對本活動的讚 :(")
+    }
+    const newFeatureInfo = this.props.selcetFeatureInfo;
+    newFeatureInfo[6] = likes.likePost
+    this.props.showFeatureInfo(newFeatureInfo)
+    this.setState((e)=>({likeChange: e.likeChange+1}))
   }
+
 
   render() {
     let display = null;
@@ -70,7 +87,7 @@ class ConnectedSlideInfo extends Component {
             </tbody>
           </table>
           <hr />
-          本活動獲得{this.state.likeNumber}個
+          本活動獲得{this.props.selcetFeatureInfo[6]}個
           <button className={styles.likeplus} onClick={this.likeplus}>
             <i className="fa fa-heart" />
           </button>
@@ -84,5 +101,5 @@ class ConnectedSlideInfo extends Component {
   }
 }
 
-const SlideInfo = connect(mapStateToProps)(ConnectedSlideInfo);
+const SlideInfo = connect(mapStateToProps,mapDispatchToProps)(ConnectedSlideInfo);
 export default SlideInfo;
